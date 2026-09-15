@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import type { Tables } from '../lib/database.types'
+import { formatZAR } from '../lib/currency'
 
 type Listing = Tables<'listings'>
 
@@ -38,7 +39,7 @@ export function ListingsPage() {
         <li key={listing.id} className="listing-card">
           <Link to={`/listings/${listing.id}`}>
             <h2>{listing.title}</h2>
-            <p className="listing-price">${listing.current_price.toFixed(2)}</p>
+            <p className="listing-price">{formatZAR(listing.current_price)}</p>
           </Link>
         </li>
       ))}

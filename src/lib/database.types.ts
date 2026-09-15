@@ -22,6 +22,8 @@ export type Database = {
           id: string
           is_winning: boolean | null
           listing_id: string
+          paystack_authorization_code: string | null
+          paystack_reference: string | null
         }
         Insert: {
           amount: number
@@ -30,6 +32,8 @@ export type Database = {
           id?: string
           is_winning?: boolean | null
           listing_id: string
+          paystack_authorization_code?: string | null
+          paystack_reference?: string | null
         }
         Update: {
           amount?: number
@@ -38,6 +42,8 @@ export type Database = {
           id?: string
           is_winning?: boolean | null
           listing_id?: string
+          paystack_authorization_code?: string | null
+          paystack_reference?: string | null
         }
         Relationships: [
           {
@@ -291,7 +297,13 @@ export type Database = {
     }
     Functions: {
       place_bid: {
-        Args: { p_amount: number; p_bidder_id: string; p_listing_id: string }
+        Args: {
+          p_amount: number
+          p_bidder_id: string
+          p_listing_id: string
+          p_paystack_authorization_code: string
+          p_paystack_reference: string
+        }
         Returns: {
           amount: number
           bidder_id: string
@@ -299,6 +311,8 @@ export type Database = {
           id: string
           is_winning: boolean | null
           listing_id: string
+          paystack_authorization_code: string | null
+          paystack_reference: string | null
         }
         SetofOptions: {
           from: "*"
