@@ -220,3 +220,18 @@ button {
 .bid-history li {
   padding: 2px 0;
 }
+
+.seller-onboarding {
+  max-width: 420px;
+  margin: 64px auto;
+  padding: 0 24px;
+}
+
+.seller-onboarding .auth-form select {
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+}

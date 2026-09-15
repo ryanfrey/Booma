@@ -11,6 +11,9 @@ export function HomePage() {
       <p>
         <Link to="/listings">Browse live auctions</Link>
       </p>
+      <p>
+        <Link to="/sell">{profile?.is_seller ? 'Seller payouts' : 'Start selling'}</Link>
+      </p>
       <button type="button" onClick={signOut}>
         Sign out
       </button>

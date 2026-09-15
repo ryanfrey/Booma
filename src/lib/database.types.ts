@@ -201,10 +201,10 @@ export type Database = {
           created_at: string | null
           id: string
           listing_id: string
+          paystack_reference: string | null
           platform_fee: number
           seller_id: string
           status: string
-          stripe_payment_intent_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -213,10 +213,10 @@ export type Database = {
           created_at?: string | null
           id?: string
           listing_id: string
+          paystack_reference?: string | null
           platform_fee?: number
           seller_id: string
           status?: string
-          stripe_payment_intent_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -225,10 +225,10 @@ export type Database = {
           created_at?: string | null
           id?: string
           listing_id?: string
+          paystack_reference?: string | null
           platform_fee?: number
           seller_id?: string
           status?: string
-          stripe_payment_intent_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -262,8 +262,8 @@ export type Database = {
           display_name: string
           id: string
           is_seller: boolean | null
-          stripe_connect_account_id: string | null
-          stripe_customer_id: string | null
+          paystack_customer_code: string | null
+          paystack_subaccount_code: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -271,8 +271,8 @@ export type Database = {
           display_name: string
           id: string
           is_seller?: boolean | null
-          stripe_connect_account_id?: string | null
-          stripe_customer_id?: string | null
+          paystack_customer_code?: string | null
+          paystack_subaccount_code?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -280,8 +280,8 @@ export type Database = {
           display_name?: string
           id?: string
           is_seller?: boolean | null
-          stripe_connect_account_id?: string | null
-          stripe_customer_id?: string | null
+          paystack_customer_code?: string | null
+          paystack_subaccount_code?: string | null
         }
         Relationships: []
       }

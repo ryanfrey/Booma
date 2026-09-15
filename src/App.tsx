@@ -4,6 +4,7 @@ import { AuthPage } from './pages/AuthPage'
 import { HomePage } from './pages/HomePage'
 import { ListingsPage } from './pages/ListingsPage'
 import { ListingDetailPage } from './pages/ListingDetailPage'
+import { SellerOnboardingPage } from './pages/SellerOnboardingPage'
 
 function App() {
   return (
@@ -11,6 +12,14 @@ function App() {
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/listings" element={<ListingsPage />} />
       <Route path="/listings/:id" element={<ListingDetailPage />} />
+      <Route
+        path="/sell"
+        element={
+          <ProtectedRoute>
+            <SellerOnboardingPage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/"
         element={
