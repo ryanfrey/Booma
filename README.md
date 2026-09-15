@@ -90,10 +90,12 @@ select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret';
   re-grant only the allowed columns. `bids.paystack_reference`/`paystack_authorization_code` are
   locked down this way, and the `bids` Realtime publication is restricted to non-payment columns too
   (column-level grants alone don't restrict what `postgres_changes` broadcasts).
-- Two pre-existing gaps the security advisor flags that are **not** fixed here (need a product
-  decision, not just a flag flip): `public.categories` has RLS disabled entirely, and `payments`/
-  `listing_images` have RLS enabled with zero policies (nobody, including owners, can read/write
-  them via the API yet).
+- `categories` now has RLS enabled with a public-read policy (it's a platform-managed lookup table,
+  no client-facing write path exists). `payments` now has a policy letting the buyer and seller on
+  a payment read that row — nothing else (rows are only ever written by `close_ended_auctions()`/
+  `close-auctions`, both privileged). `listing_images` still has RLS enabled with zero policies
+  (nobody, including the listing's owner, can read/write it via the API yet) — needs the same kind
+  of pass once image upload/display is built.
 - `pg_net`'s extension registration landed in the `public` schema (a lint warning); it doesn't
   support `ALTER EXTENSION ... SET SCHEMA`, and its functions (`net.http_post`) already live in
   their own `net` schema regardless, so this is cosmetic — left as-is rather than risk the cron
