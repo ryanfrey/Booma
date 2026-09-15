@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
 export function HomePage() {
@@ -7,6 +8,9 @@ export function HomePage() {
     <div className="home-page">
       <h1>Booma</h1>
       <p>Welcome, {profile?.display_name ?? user?.email}.</p>
+      <p>
+        <Link to="/listings">Browse live auctions</Link>
+      </p>
       <button type="button" onClick={signOut}>
         Sign out
       </button>
