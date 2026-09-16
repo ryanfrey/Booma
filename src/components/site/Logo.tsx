@@ -1,12 +1,29 @@
-// Stand-in for booma-logo.png (not supplied to this build) — teal "B", black
-// wordmark, same proportions the brief describes. Swap for the real asset
-// whenever it's available; nothing else about the header depends on this
-// being text vs. an <img>.
-export function Logo({ markOnly = false, className = '' }: { markOnly?: boolean; className?: string }) {
+import { useState } from 'react'
+
+interface LogoProps {
+  markOnly?: boolean
+  className?: string
+}
+
+export function Logo({ markOnly = false, className = '' }: LogoProps) {
+  const [imgFailed, setImgFailed] = useState(false)
+
+  // Falls back to a text lockup if the real asset ever fails to load.
+  if (imgFailed) {
+    return (
+      <span className={`inline-flex items-center text-h3 font-bold tracking-tight ${className}`}>
+        <span className="text-brand">B</span>
+        {!markOnly && <span className="text-ink">ooma</span>}
+      </span>
+    )
+  }
+
   return (
-    <span className={`inline-flex items-center text-h3 font-bold tracking-tight ${className}`}>
-      <span className="text-brand">B</span>
-      {!markOnly && <span className="text-ink">ooma</span>}
-    </span>
+    <img
+      src={markOnly ? '/booma-mark.png' : '/booma-logo.png'}
+      alt="Booma"
+      className={`h-7 w-auto ${className}`}
+      onError={() => setImgFailed(true)}
+    />
   )
 }
