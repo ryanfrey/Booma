@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { ChevronRightIcon, ListIcon, PlusIcon } from '../components/icons'
 
 interface Bank {
   name: string
@@ -35,12 +36,22 @@ export function SellerOnboardingPage() {
       <div className="seller-onboarding">
         <h1>You're all set up to sell</h1>
         <p>Payouts go to the bank account you linked, minus Booma's platform fee.</p>
-        <p>
-          <Link to="/sell/new">Create a listing</Link>
-        </p>
-        <p>
-          <Link to="/sell/listings">My listings</Link>
-        </p>
+        <div className="quick-actions">
+          <Link to="/sell/new" className="quick-action-card">
+            <span className="quick-action-icon">
+              <PlusIcon />
+            </span>
+            <span className="quick-action-label">Create a listing</span>
+            <ChevronRightIcon className="quick-action-chevron" />
+          </Link>
+          <Link to="/sell/listings" className="quick-action-card">
+            <span className="quick-action-icon">
+              <ListIcon />
+            </span>
+            <span className="quick-action-label">My listings</span>
+            <ChevronRightIcon className="quick-action-chevron" />
+          </Link>
+        </div>
       </div>
     )
   }

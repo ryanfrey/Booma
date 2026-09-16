@@ -27,6 +27,7 @@ export function AuthPage() {
 
   return (
     <div className="auth-page">
+      <p className="auth-brand">Booma</p>
       <form onSubmit={handleSubmit} className="auth-form">
         <h1>{mode === 'sign-up' ? 'Create an account' : 'Sign in'}</h1>
 

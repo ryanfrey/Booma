@@ -245,11 +245,14 @@ export function CreateListingPage() {
           </ul>
         )}
 
-        {error && <p className="auth-error">{error}</p>}
-
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'Publishing…' : 'Publish listing'}
-        </button>
+        <div className="form-sticky-footer">
+          <div className="form-sticky-footer-inner">
+            {error && <p className="auth-error">{error}</p>}
+            <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
+              {submitting ? 'Publishing…' : 'Publish listing'}
+            </button>
+          </div>
+        </div>
       </form>
     </div>
   )

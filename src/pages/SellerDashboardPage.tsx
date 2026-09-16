@@ -91,10 +91,12 @@ export function SellerDashboardPage() {
 
   return (
     <div className="seller-dashboard">
-      <h1>My listings</h1>
-      <p>
-        <Link to="/sell/new">Create a new listing</Link>
-      </p>
+      <div className="dashboard-header">
+        <h1>My listings</h1>
+        <Link to="/sell/new" className="btn btn-primary">
+          New listing
+        </Link>
+      </div>
 
       {error && <p className="auth-error">{error}</p>}
 

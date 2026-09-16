@@ -120,7 +120,7 @@ export function BiddingPanel({ listingId }: { listingId: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id])
 
-  if (!listing) return <p>Loading…</p>
+  if (!listing) return <p className="listings-status">Loading…</p>
 
   const minBid = listing.current_price + listing.bid_increment
   const isSeller = user?.id === listing.seller_id
@@ -165,42 +165,58 @@ export function BiddingPanel({ listingId }: { listingId: string }) {
   }
 
   return (
-    <div className="bidding-panel">
-      <p className="current-price">{formatZAR(listing.current_price)}</p>
-      <p className="time-left">{timeLeft}</p>
-      {isHighBidder && !isEnded && <p className="high-bidder-badge">You're the highest bidder</p>}
+    <>
+      <div className="bid-summary-bar">
+        <div className="bid-summary-inner">
+          <div className="bid-summary-info">
+            <p className="current-price">{formatZAR(listing.current_price)}</p>
+            <p className="time-left">{timeLeft}</p>
+            {isHighBidder && !isEnded && <p className="high-bidder-badge">You're the highest bidder</p>}
+          </div>
 
-      {canBid ? (
-        <form onSubmit={handleSubmit} className="bid-form">
-          <input
-            type="number"
-            step="0.01"
-            min={minBid}
-            placeholder={`${formatZAR(minBid)} or more`}
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            required
-          />
-          <button type="submit" disabled={submitting || redirecting}>
-            {redirecting ? 'Redirecting to card authorization…' : submitting ? 'Placing bid…' : 'Place bid'}
-          </button>
-        </form>
-      ) : isSeller ? (
-        <p className="bid-hint">You can't bid on your own listing.</p>
-      ) : isEnded || listing.status !== 'live' ? (
-        <p className="bid-hint">This auction has ended.</p>
-      ) : (
-        <p className="bid-hint">Sign in to place a bid.</p>
-      )}
+          {canBid ? (
+            <form onSubmit={handleSubmit} className="bid-form">
+              <input
+                type="number"
+                step="0.01"
+                min={minBid}
+                placeholder={`${formatZAR(minBid)} or more`}
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                required
+              />
+              <button type="submit" disabled={submitting || redirecting}>
+                {redirecting ? 'Redirecting…' : submitting ? 'Placing bid…' : 'Place bid'}
+              </button>
+            </form>
+          ) : isSeller ? (
+            <p className="bid-hint">You can't bid on your own listing.</p>
+          ) : isEnded || listing.status !== 'live' ? (
+            <p className="bid-hint">This auction has ended.</p>
+          ) : (
+            <p className="bid-hint">Sign in to place a bid.</p>
+          )}
 
-      {submitting && !redirecting && <p className="bid-hint">Confirming your card authorization…</p>}
-      {error && <p className="auth-error">{error}</p>}
+          {submitting && !redirecting && <p className="bid-hint">Confirming your card authorization…</p>}
+          {error && <p className="auth-error">{error}</p>}
+        </div>
+      </div>
 
-      <ul className="bid-history">
-        {bids.map((bid) => (
-          <li key={bid.id}>{formatZAR(bid.amount)}</li>
-        ))}
-      </ul>
-    </div>
+      <div className="bid-history-card">
+        <h2 className="bid-history-heading">Recent bids</h2>
+        {bids.length === 0 ? (
+          <p className="bid-hint">No bids yet — be the first.</p>
+        ) : (
+          <ul className="bid-history">
+            {bids.map((bid) => (
+              <li key={bid.id}>
+                <span>{formatZAR(bid.amount)}</span>
+                {bid.created_at && <span>{new Date(bid.created_at).toLocaleString()}</span>}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
   )
 }

@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import type { Tables } from '../lib/database.types'
 import { formatZAR } from '../lib/currency'
 import { getListingPhotoUrl } from '../lib/storage'
+import { formatTimeLeft } from '../lib/timeLeft'
 
 type Listing = Tables<'listings'>
 
@@ -51,16 +52,22 @@ export function ListingsPage() {
   if (listings.length === 0) return <p className="listings-status">No live auctions right now.</p>
 
   return (
-    <ul className="listings-grid">
-      {listings.map((listing) => (
-        <li key={listing.id} className="listing-card">
-          <Link to={`/listings/${listing.id}`}>
-            {thumbnails[listing.id] && <img className="listing-thumb" src={thumbnails[listing.id]} alt="" />}
-            <h2>{listing.title}</h2>
-            <p className="listing-price">{formatZAR(listing.current_price)}</p>
-          </Link>
-        </li>
-      ))}
-    </ul>
+    <div className="listings-page">
+      <h1 className="listings-heading">Live auctions</h1>
+      <ul className="listings-grid">
+        {listings.map((listing) => (
+          <li key={listing.id} className="listing-card">
+            <Link to={`/listings/${listing.id}`}>
+              <div className="listing-thumb-wrap">
+                {thumbnails[listing.id] && <img className="listing-thumb" src={thumbnails[listing.id]} alt="" />}
+              </div>
+              <h2>{listing.title}</h2>
+              <p className="listing-price">{formatZAR(listing.current_price)}</p>
+              <span className="listing-time-badge">{formatTimeLeft(listing.ends_at)}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
