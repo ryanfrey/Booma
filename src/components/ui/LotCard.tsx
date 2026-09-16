@@ -19,6 +19,10 @@ export interface LotCardProps {
   watched?: boolean
   onToggleWatch?: () => void
   onQuickBid?: () => void
+  /** Shown top-right of the image for lots in a running live auction, e.g. "Lot 14 of 80". */
+  lotProgress?: string
+  /** Live viewer count, shown alongside lotProgress. */
+  viewerCount?: number
 }
 
 export function LotCard({
@@ -35,6 +39,8 @@ export function LotCard({
   watched = false,
   onToggleWatch,
   onQuickBid,
+  lotProgress,
+  viewerCount,
 }: LotCardProps) {
   const isSold = status === 'sold'
 
@@ -79,6 +85,12 @@ export function LotCard({
         <p className="mt-0.5 text-small text-ink-2">
           {condition} · {location}
         </p>
+        {lotProgress && (
+          <p className="mt-0.5 text-small text-ink-2">
+            {lotProgress}
+            {viewerCount !== undefined && ` · ${viewerCount} watching`}
+          </p>
+        )}
 
         <div className="mt-2 flex items-baseline justify-between">
           {isSold ? (
@@ -86,7 +98,9 @@ export function LotCard({
           ) : (
             <PriceTicker amount={currentBid} className="text-h3 font-bold" />
           )}
-          <span className="text-small text-ink-2">{isSold ? 'Sold' : `${bidCount} bids`}</span>
+          <span className="text-small text-ink-2">
+            {isSold ? 'Sold' : `${bidCount} ${bidCount === 1 ? 'bid' : 'bids'}`}
+          </span>
         </div>
 
         {!isSold && <Countdown endsAt={endsAt} className="mt-1 block text-small" />}

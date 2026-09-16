@@ -18,8 +18,6 @@
   --shadow-sm: 0 1px 2px rgba(8, 6, 13, 0.06);
   --shadow-md: 0 4px 20px rgba(8, 6, 13, 0.1);
 
-  --top-bar-h: 56px;
-  --bottom-nav-h: 58px;
   --sticky-bar-h: 84px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -97,82 +95,6 @@ textarea {
 }
 
 /* ---------- App shell / navigation ---------- */
-
-.app-shell {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
-}
-
-.top-bar {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: calc(var(--top-bar-h) + env(safe-area-inset-top));
-  padding: env(safe-area-inset-top) 12px 0;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-}
-
-.top-bar-brand {
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--accent);
-  text-decoration: none;
-  padding: 8px 4px;
-}
-
-.top-bar-title {
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--text-h);
-}
-
-.top-bar-back {
-  margin-left: -4px;
-}
-
-.app-main {
-  flex: 1;
-  padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 16px);
-}
-
-.app-main.no-bottom-nav {
-  padding-bottom: 16px;
-}
-
-.bottom-nav {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 30;
-  display: flex;
-  background: var(--bg);
-  border-top: 1px solid var(--border);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.bottom-nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  min-height: var(--bottom-nav-h);
-  color: var(--text-muted);
-  text-decoration: none;
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.bottom-nav-item.active {
-  color: var(--accent);
-}
 
 /* ---------- Buttons & form controls ---------- */
 
@@ -321,7 +243,6 @@ textarea {
 
 .page,
 .auth-page,
-.home-page,
 .listing-detail,
 .seller-onboarding,
 .create-listing-page,
@@ -346,19 +267,7 @@ textarea {
   margin: 0 0 24px;
 }
 
-/* ---------- Home ---------- */
-
-.home-header {
-  margin-bottom: 24px;
-}
-
-.home-eyebrow {
-  color: var(--text-muted);
-  font-size: 13px;
-  margin: 0 0 2px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
+/* ---------- Home (legacy quick-actions, still used by seller onboarding) ---------- */
 
 .quick-actions {
   display: flex;
