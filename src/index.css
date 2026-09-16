@@ -3,7 +3,7 @@
 @import 'tailwindcss/utilities.css' layer(utilities);
 
 /*
- * Booma design tokens (design brief section 2). Teal is the only accent —
+ * Flip design tokens (design brief section 2). Teal is the only accent —
  * everything else is white, grey or black. These map onto Tailwind v4's
  * theme variables, so e.g. --color-brand below gives you bg-brand,
  * text-brand, border-brand, etc. for free.

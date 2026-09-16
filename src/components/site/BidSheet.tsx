@@ -57,7 +57,7 @@ function SignInGate({ onClose, onSignedIn }: { onClose: () => void; onSignedIn: 
   return (
     <SheetShell onClose={onClose}>
       <h2 className="text-h3 tracking-tight text-ink">Sign in to bid</h2>
-      <p className="mt-1 text-small text-ink-2">You'll need an account to place a bid on Booma.</p>
+      <p className="mt-1 text-small text-ink-2">You'll need an account to place a bid on Flip.</p>
 
       <form onSubmit={handleSubmit} className="mt-5 flex flex-col gap-3">
         {authMode === 'sign-up' && (

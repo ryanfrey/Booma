@@ -38,7 +38,7 @@ export function StyleguidePage() {
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6">
-      <p className="text-small font-semibold text-brand-ink">Booma design system</p>
+      <p className="text-small font-semibold text-brand-ink">Flip design system</p>
       <h1 className="mt-1 text-h1 tracking-tight text-ink">Styleguide</h1>
       <p className="mt-2 max-w-[560px] text-body text-ink-2">
         Tokens and primitives from the frontend design brief — an IKEA catalogue feel with Apple's calm, and a live

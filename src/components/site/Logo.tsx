@@ -12,16 +12,16 @@ export function Logo({ markOnly = false, className = '' }: LogoProps) {
   if (imgFailed) {
     return (
       <span className={`inline-flex items-center text-display font-bold tracking-tight ${className}`}>
-        <span className="text-brand">B</span>
-        {!markOnly && <span className="text-ink">ooma</span>}
+        <span className="text-brand">f</span>
+        {!markOnly && <span className="text-ink">lip</span>}
       </span>
     )
   }
 
   return (
     <img
-      src={markOnly ? '/booma-mark.png' : '/booma-logo.png'}
-      alt="Booma"
+      src={markOnly ? '/flip-mark.png' : '/flip-logo.png'}
+      alt="Flip"
       className={`h-24 w-auto ${className}`}
       onError={() => setImgFailed(true)}
     />

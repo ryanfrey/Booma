@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext'
 // Selling isn't a top-level nav item in the new IA (design brief section
 // 3.1 only lists Browse / Live now / Watchlist / account), so the seller
 // entry points that used to live on the old Home dashboard hang off this
-// menu for now. They'll move into "My Booma" (brief section 3.9) later.
+// menu for now. They'll move into "My Flip" (brief section 3.9) later.
 export function AccountMenu() {
   const { session, profile, signOut } = useAuth()
   const [open, setOpen] = useState(false)

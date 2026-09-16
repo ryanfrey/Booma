@@ -3,7 +3,7 @@ import { Logo } from './Logo'
 
 const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] = [
   {
-    heading: 'Booma',
+    heading: 'Flip',
     links: [
       { label: 'Browse lots', href: '/listings' },
       { label: 'How it works', href: '/#how-it-works' },
@@ -48,7 +48,7 @@ export function Footer() {
           </div>
         </div>
 
-        <p className="mt-10 text-micro text-ink-2">© {new Date().getFullYear()} Booma. Prices in ZAR.</p>
+        <p className="mt-10 text-micro text-ink-2">© {new Date().getFullYear()} Flip. Prices in ZAR.</p>
       </div>
     </footer>
   )

@@ -35,7 +35,7 @@ export function SellerOnboardingPage() {
     return (
       <div className="seller-onboarding">
         <h1>You're all set up to sell</h1>
-        <p>Payouts go to the bank account you linked, minus Booma's platform fee.</p>
+        <p>Payouts go to the bank account you linked, minus Flip's platform fee.</p>
         <div className="quick-actions">
           <Link to="/sell/new" className="quick-action-card">
             <span className="quick-action-icon">

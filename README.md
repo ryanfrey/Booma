@@ -1,4 +1,4 @@
-# Booma
+# Flip
 
 Household goods auction platform. React + TypeScript + Vite frontend backed by Supabase
 (Postgres + Auth + Storage + Realtime), with Paystack for seller payouts and payments.

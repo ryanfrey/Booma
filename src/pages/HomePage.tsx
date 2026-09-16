@@ -9,7 +9,7 @@ import type { MockAuction, MockLot } from '../lib/mockData'
 
 const HOW_IT_WORKS = [
   { icon: UserPlus, title: 'Register', body: 'Create an account and verify your phone and card — takes a minute.' },
-  { icon: Gavel, title: 'Bid', body: 'Place a bid or set a max and let Booma bid for you, up to your limit.' },
+  { icon: Gavel, title: 'Bid', body: 'Place a bid or set a max and let Flip bid for you, up to your limit.' },
   { icon: CreditCard, title: 'Pay & collect', body: "Win the lot, pay securely, then collect or arrange delivery." },
 ]
 
@@ -89,7 +89,7 @@ export function HomePage() {
           <div>
             <h1 className="text-h1 tracking-tight text-ink sm:text-display">Great homes, sold live.</h1>
             <p className="mt-4 max-w-[440px] text-body text-ink-2">
-              Booma is a live auction for household goods — real bids, real countdowns, real people clearing out
+              Flip is a live auction for household goods — real bids, real countdowns, real people clearing out
               real homes across South Africa.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -159,9 +159,9 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* How Booma works */}
+      {/* How Flip works */}
       <section id="how-it-works" className="mx-auto max-w-[1280px] px-4 py-16 sm:px-6">
-        <SectionHeading title="How Booma works" />
+        <SectionHeading title="How Flip works" />
         <div className="mt-6 grid gap-8 sm:grid-cols-3">
           {HOW_IT_WORKS.map((step) => (
             <div key={step.title}>
