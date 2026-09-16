@@ -8,11 +8,13 @@ import { ListingDetailPage } from './pages/ListingDetailPage'
 import { SellerOnboardingPage } from './pages/SellerOnboardingPage'
 import { CreateListingPage } from './pages/CreateListingPage'
 import { SellerDashboardPage } from './pages/SellerDashboardPage'
+import { StyleguidePage } from './pages/StyleguidePage'
 
 function App() {
   return (
     <Routes>
       <Route path="/auth" element={<AuthPage />} />
+      <Route path="/styleguide" element={<StyleguidePage />} />
       <Route element={<AppShell />}>
         <Route path="/listings" element={<ListingsPage />} />
         <Route path="/listings/:id" element={<ListingDetailPage />} />
