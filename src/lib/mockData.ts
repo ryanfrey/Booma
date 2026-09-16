@@ -7,6 +7,7 @@ export interface MockLot {
   id: string
   title: string
   imageUrl?: string
+  imageCount: number
   condition: string
   location: string
   currentBid: number
@@ -20,6 +21,12 @@ export interface MockLot {
   lotNumber: number
   lotsInAuction: number
   viewerCount?: number
+  /** undefined = no reserve on this lot. */
+  reserveMet?: boolean
+  description: string
+  dimensions: string
+  conditionNotes: string
+  collectionDetails: string
 }
 
 export interface MockUpcomingAuction {
@@ -46,6 +53,7 @@ export const MOCK_LOTS: MockLot[] = [
   {
     id: 'lot-1',
     title: 'Mid-century oak dining table',
+    imageCount: 4,
     condition: 'Good',
     location: 'Cape Town',
     currentBid: 950,
@@ -57,10 +65,17 @@ export const MOCK_LOTS: MockLot[] = [
     auctionTitle: 'Southern Suburbs Estate',
     lotNumber: 14,
     lotsInAuction: 80,
+    reserveMet: true,
+    description:
+      'Solid oak dining table from the estate’s formal dining room. Warm honey finish, tapered legs, seats six comfortably.',
+    dimensions: '180cm L x 90cm W x 75cm H',
+    conditionNotes: 'A few light surface scratches consistent with age and use. No structural damage; all joints solid.',
+    collectionDetails: 'Collection from Constantia, Cape Town, by appointment within 7 days of the auction closing.',
   },
   {
     id: 'lot-2',
     title: 'Retro two-door fridge, some rust on the door',
+    imageCount: 3,
     condition: 'Fair',
     location: 'Johannesburg',
     currentBid: 620,
@@ -72,10 +87,16 @@ export const MOCK_LOTS: MockLot[] = [
     auctionTitle: 'Northcliff Downsize',
     lotNumber: 22,
     lotsInAuction: 46,
+    reserveMet: false,
+    description: 'Working two-door fridge-freezer with a distinctive retro shape. Powers on and cools normally.',
+    dimensions: '70cm W x 65cm D x 170cm H',
+    conditionNotes: 'Surface rust on the lower door edge. Interior clean, seals intact, compressor runs quietly.',
+    collectionDetails: 'Collection from Northcliff, Johannesburg. Buyer to arrange own transport — no delivery.',
   },
   {
     id: 'lot-3',
     title: 'Set of 6 upholstered dining chairs',
+    imageCount: 5,
     condition: 'Like new',
     location: 'Durban',
     currentBid: 1250,
@@ -88,10 +109,15 @@ export const MOCK_LOTS: MockLot[] = [
     lotNumber: 8,
     lotsInAuction: 60,
     viewerCount: 34,
+    description: 'Six matching dining chairs in oatmeal linen with solid wood legs. Barely used, from a show home.',
+    dimensions: '48cm W x 55cm D x 90cm H (each)',
+    conditionNotes: 'No visible marks or wear. Sold as a set of six.',
+    collectionDetails: 'Collection from Umhlanga, Durban, or nationwide courier can be arranged at the buyer’s cost.',
   },
   {
     id: 'lot-4',
     title: 'Antique writing desk with brass handles',
+    imageCount: 4,
     condition: 'Good',
     location: 'Pretoria',
     currentBid: 0,
@@ -104,10 +130,15 @@ export const MOCK_LOTS: MockLot[] = [
     auctionTitle: 'Waterkloof Study',
     lotNumber: 3,
     lotsInAuction: 40,
+    description: 'Campaign-style writing desk with original brass drawer handles and a leather-inset top.',
+    dimensions: '120cm W x 60cm D x 76cm H',
+    conditionNotes: 'One handle has a small dent. Leather top shows light patina consistent with age.',
+    collectionDetails: 'Collection from Waterkloof, Pretoria, within 7 days of the auction closing.',
   },
   {
     id: 'lot-5',
     title: 'Scandinavian 3-seater sofa in charcoal linen',
+    imageCount: 4,
     condition: 'Good',
     location: 'Cape Town',
     currentBid: 3400,
@@ -118,10 +149,16 @@ export const MOCK_LOTS: MockLot[] = [
     auctionTitle: 'Southern Suburbs Estate',
     lotNumber: 15,
     lotsInAuction: 80,
+    reserveMet: false,
+    description: 'Low-profile 3-seater sofa, charcoal linen upholstery, solid beech legs.',
+    dimensions: '210cm W x 90cm D x 80cm H',
+    conditionNotes: 'Light fading on the arm rests from sun exposure. Cushions retain their shape well.',
+    collectionDetails: 'Collection from Constantia, Cape Town, by appointment within 7 days of the auction closing.',
   },
   {
     id: 'lot-6',
     title: 'Cast iron gas 5-burner hob',
+    imageCount: 3,
     condition: 'Good',
     location: 'Johannesburg',
     currentBid: 1800,
@@ -132,10 +169,15 @@ export const MOCK_LOTS: MockLot[] = [
     auctionTitle: 'Northcliff Downsize',
     lotNumber: 30,
     lotsInAuction: 46,
+    description: 'Freestanding 5-burner gas hob with cast iron pan supports. Removed during a kitchen renovation.',
+    dimensions: '90cm W x 52cm D',
+    conditionNotes: 'Light staining around the burners from normal use. All ignitors spark and burners light evenly.',
+    collectionDetails: 'Collection from Northcliff, Johannesburg. Buyer to arrange own transport — no delivery.',
   },
   {
     id: 'lot-7',
     title: 'Weber kettle braai, 57cm, well used',
+    imageCount: 2,
     condition: 'Fair',
     location: 'Stellenbosch',
     currentBid: 480,
@@ -146,10 +188,15 @@ export const MOCK_LOTS: MockLot[] = [
     auctionTitle: 'Stellenbosch Garden Sale',
     lotNumber: 11,
     lotsInAuction: 28,
+    description: 'Classic 57cm Weber kettle braai. Well loved, still holds heat and seals well.',
+    dimensions: '57cm diameter',
+    conditionNotes: 'Exterior paint worn in places, grate shows normal use. Lid seals properly, no rust-through.',
+    collectionDetails: 'Collection from Stellenbosch by appointment.',
   },
   {
     id: 'lot-8',
     title: 'Solid wood bunk bed with trundle',
+    imageCount: 4,
     condition: 'Good',
     location: 'Durban',
     currentBid: 1100,
@@ -160,10 +207,15 @@ export const MOCK_LOTS: MockLot[] = [
     auctionTitle: 'Umhlanga Collection',
     lotNumber: 40,
     lotsInAuction: 60,
+    description: 'Solid pine bunk bed with a pull-out trundle for a third sleeper. Flat-packs for transport.',
+    dimensions: '200cm L x 100cm W x 160cm H',
+    conditionNotes: 'Minor scuffs on the ladder rungs. All slats and fittings included.',
+    collectionDetails: 'Collection from Umhlanga, Durban, or nationwide courier can be arranged at the buyer’s cost.',
   },
   {
     id: 'lot-9',
     title: 'King-size headboard, tufted velvet',
+    imageCount: 3,
     condition: 'Like new',
     location: 'Pretoria',
     currentBid: 890,
@@ -174,10 +226,16 @@ export const MOCK_LOTS: MockLot[] = [
     auctionTitle: 'Waterkloof Study',
     lotNumber: 18,
     lotsInAuction: 40,
+    reserveMet: true,
+    description: 'King-size tufted headboard in deep green velvet, freestanding with weighted feet.',
+    dimensions: '190cm W x 130cm H',
+    conditionNotes: 'No marks on the fabric. Barely used — from a spare room.',
+    collectionDetails: 'Collection from Waterkloof, Pretoria, within 7 days of the auction closing.',
   },
   {
     id: 'lot-10',
     title: '12-piece stoneware dinner set',
+    imageCount: 3,
     condition: 'Like new',
     location: 'Cape Town',
     currentBid: 340,
@@ -188,10 +246,15 @@ export const MOCK_LOTS: MockLot[] = [
     auctionTitle: 'Southern Suburbs Estate',
     lotNumber: 55,
     lotsInAuction: 80,
+    description: '12-piece stoneware dinner set in matte white — 4 dinner plates, 4 side plates, 4 bowls.',
+    dimensions: 'Dinner plate 27cm diameter',
+    conditionNotes: 'No chips or cracks. Light use only, dishwasher safe.',
+    collectionDetails: 'Collection from Constantia, Cape Town, by appointment within 7 days of the auction closing.',
   },
   {
     id: 'lot-11',
     title: 'Standing floor lamp, brushed brass',
+    imageCount: 2,
     condition: 'Good',
     location: 'Johannesburg',
     currentBid: 260,
@@ -202,10 +265,15 @@ export const MOCK_LOTS: MockLot[] = [
     auctionTitle: 'Northcliff Downsize',
     lotNumber: 6,
     lotsInAuction: 46,
+    description: 'Brushed brass standing lamp with a linen drum shade. Foot switch, in full working order.',
+    dimensions: '35cm diameter base, 155cm H',
+    conditionNotes: 'A couple of small tarnish spots on the pole. Shade is clean, no marks.',
+    collectionDetails: 'Collection from Northcliff, Johannesburg. Buyer to arrange own transport — no delivery.',
   },
   {
     id: 'lot-12',
     title: '55" LED television, no remote',
+    imageCount: 3,
     condition: 'Fair',
     location: 'Durban',
     currentBid: 2200,
@@ -218,6 +286,11 @@ export const MOCK_LOTS: MockLot[] = [
     lotNumber: 9,
     lotsInAuction: 60,
     viewerCount: 58,
+    reserveMet: true,
+    description: '55" LED television, full HD. Powers on and displays correctly. Sold without a remote.',
+    dimensions: '123cm W x 71cm H',
+    conditionNotes: 'Minor scuff on the lower bezel. Screen has no dead pixels or marks.',
+    collectionDetails: 'Collection from Umhlanga, Durban, or nationwide courier can be arranged at the buyer’s cost.',
   },
 ]
 

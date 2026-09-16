@@ -4,7 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { AuthPage } from './pages/AuthPage'
 import { HomePage } from './pages/HomePage'
 import { BrowsePage } from './pages/BrowsePage'
-import { ListingDetailPage } from './pages/ListingDetailPage'
+import { LotDetailPage } from './pages/LotDetailPage'
 import { SellerOnboardingPage } from './pages/SellerOnboardingPage'
 import { CreateListingPage } from './pages/CreateListingPage'
 import { SellerDashboardPage } from './pages/SellerDashboardPage'
@@ -18,7 +18,7 @@ function App() {
       <Route element={<SiteLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/listings" element={<BrowsePage />} />
-        <Route path="/listings/:id" element={<ListingDetailPage />} />
+        <Route path="/listings/:id" element={<LotDetailPage />} />
         <Route
           path="/sell"
           element={

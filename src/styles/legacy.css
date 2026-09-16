@@ -94,8 +94,6 @@ textarea {
   font-family: var(--sans);
 }
 
-/* ---------- App shell / navigation ---------- */
-
 /* ---------- Buttons & form controls ---------- */
 
 .btn {
@@ -243,7 +241,6 @@ textarea {
 
 .page,
 .auth-page,
-.listing-detail,
 .seller-onboarding,
 .create-listing-page,
 .seller-dashboard {
@@ -315,7 +312,7 @@ textarea {
   flex-shrink: 0;
 }
 
-/* ---------- Listings ---------- */
+/* ---------- Listings (legacy status text, still used by seller dashboard) ---------- */
 
 .listings-status {
   max-width: 480px;
@@ -323,246 +320,6 @@ textarea {
   padding: 0 24px;
   text-align: center;
   color: var(--text-muted);
-}
-
-.listings-page {
-  padding: 16px 16px 8px;
-}
-
-.listings-heading {
-  margin: 4px 0 16px;
-}
-
-.listings-grid {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0;
-}
-
-@media (min-width: 520px) {
-  .listings-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  }
-}
-
-.listing-card {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 10px;
-  background: var(--bg);
-}
-
-.listing-card a {
-  color: inherit;
-  text-decoration: none;
-  display: block;
-}
-
-.listing-card h2 {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0 0 4px;
-  color: var(--text-h);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.listing-price {
-  font-weight: 700;
-  font-size: 15px;
-  color: var(--text-h);
-  margin: 0;
-}
-
-.listing-time-badge {
-  display: inline-block;
-  margin-top: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.listing-thumb-wrap {
-  position: relative;
-  margin-bottom: 8px;
-}
-
-.listing-thumb {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: var(--radius-md);
-  display: block;
-  background: var(--bg-subtle);
-}
-
-.listing-description {
-  margin: 8px 0 24px;
-  color: var(--text);
-}
-
-/* ---------- Bidding ---------- */
-
-.bid-summary-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 25;
-  background: var(--bg);
-  border-top: 1px solid var(--border);
-  box-shadow: 0 -4px 16px rgba(8, 6, 13, 0.08);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.bid-summary-inner {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 10px 16px;
-}
-
-.bid-summary-info {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
-}
-
-.current-price {
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--text-h);
-  margin: 0;
-}
-
-.time-left {
-  color: var(--text-muted);
-  font-size: 13px;
-  margin: 0;
-}
-
-.high-bidder-badge {
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 600;
-  margin: 0;
-  width: 100%;
-}
-
-.bid-hint {
-  color: var(--text-muted);
-  font-size: 14px;
-  margin: 0;
-}
-
-.bid-form {
-  display: flex;
-  gap: 8px;
-}
-
-.bid-form input {
-  flex: 1;
-  min-width: 0;
-  font: inherit;
-  font-size: 16px;
-  min-height: 48px;
-  padding: 10px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--bg);
-  color: var(--text-h);
-}
-
-.bid-form input:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
-  border-color: var(--accent);
-}
-
-.bid-form button {
-  min-height: 48px;
-  padding: 0 20px;
-  border: none;
-  border-radius: var(--radius-md);
-  background: var(--accent);
-  color: var(--accent-text);
-  font-weight: 600;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.bid-form button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.bid-summary-inner > .auth-error {
-  margin-top: 8px;
-}
-
-.listing-detail {
-  padding-bottom: calc(var(--sticky-bar-h) + env(safe-area-inset-bottom) + 24px);
-}
-
-.bid-history-card {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  margin-top: 20px;
-}
-
-.bid-history-heading {
-  font-size: 15px;
-  margin: 0 0 10px;
-}
-
-.bid-history {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  font-size: 14px;
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.bid-history li {
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.bid-history li:last-child {
-  border-bottom: none;
-}
-
-/* ---------- Seller onboarding ---------- */
-
-.listing-photos {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  margin: 16px 0;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-}
-
-.listing-photos img {
-  width: 220px;
-  height: 220px;
-  object-fit: cover;
-  border-radius: var(--radius-lg);
-  flex-shrink: 0;
-  scroll-snap-align: start;
 }
 
 /* ---------- Create listing ---------- */
