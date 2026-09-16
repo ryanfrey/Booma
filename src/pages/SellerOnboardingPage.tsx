@@ -38,6 +38,9 @@ export function SellerOnboardingPage() {
         <p>
           <Link to="/sell/new">Create a listing</Link>
         </p>
+        <p>
+          <Link to="/sell/listings">My listings</Link>
+        </p>
       </div>
     )
   }

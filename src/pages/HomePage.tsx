@@ -15,9 +15,14 @@ export function HomePage() {
         <Link to="/sell">{profile?.is_seller ? 'Seller payouts' : 'Start selling'}</Link>
       </p>
       {profile?.is_seller && (
-        <p>
-          <Link to="/sell/new">Create a listing</Link>
-        </p>
+        <>
+          <p>
+            <Link to="/sell/listings">My listings</Link>
+          </p>
+          <p>
+            <Link to="/sell/new">Create a listing</Link>
+          </p>
+        </>
       )}
       <button type="button" onClick={signOut}>
         Sign out

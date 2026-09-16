@@ -35,8 +35,13 @@ Security below).
 listing to `live`. Photos are optional and kept in their original format (jpeg/png/webp) rather
 than transcoded to webp, despite the storage path convention implying `.webp` — simpler for an
 MVP, worth revisiting if consistent thumbnails matter later. A failed upload partway through
-leaves the listing stuck in `draft` (invisible, since there's no "my listings" page yet to find
-and retry it from) — a known rough edge, not a data-integrity problem.
+leaves the listing stuck in `draft`; there's no resume/retry flow, but `SellerDashboardPage`
+(`/sell/listings`) at least surfaces stuck drafts so a seller can delete one and start over
+instead of it being an invisible orphan row.
+
+`SellerDashboardPage` also lists a seller's own listings across every status (draft/live/ended/
+sold) with a thumbnail and, for sold listings, the linked payment's status — the same statuses
+`close-auctions` writes to `payments.status`.
 
 ## Payments — Paystack
 
