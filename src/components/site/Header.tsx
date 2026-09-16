@@ -16,7 +16,7 @@ export function Header({ watchCount = 0, hasLiveLots = false }: { watchCount?: n
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-surface">
-      <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-4 px-4 sm:px-6">
+      <div className="mx-auto flex max-w-[1280px] items-center gap-4 px-4 py-3 sm:px-6">
         <Link to="/" className="shrink-0">
           <Logo className="hidden sm:block" />
           <Logo markOnly className="sm:hidden" />
