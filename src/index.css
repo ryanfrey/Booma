@@ -9,9 +9,9 @@
  * text-brand, border-brand, etc. for free.
  */
 @theme {
-  --color-brand: #00d3cc;
-  --color-brand-ink: #00807a;
-  --color-brand-tint: #e6faf9;
+  --color-brand: #409da2;
+  --color-brand-ink: #276568;
+  --color-brand-tint: #edf7f8;
   --color-ink: #0a0a0a;
   --color-ink-2: #6e6e73;
   --color-line: #e8e8ed;
@@ -58,7 +58,7 @@
     --color-line: #2a2a2e;
     --color-surface: #0a0a0a;
     --color-surface-2: #161618;
-    --color-brand-tint: #0d2b29;
+    --color-brand-tint: #112b2c;
     --color-danger-tint: #2a1512;
     --color-warning-tint: #2a1d0d;
   }

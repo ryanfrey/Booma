@@ -7,9 +7,9 @@ import { PriceTicker } from '../components/ui/PriceTicker'
 import { StatusChip, type LotStatus } from '../components/ui/StatusChip'
 
 const COLORS: { name: string; token: string; className: string }[] = [
-  { name: 'Brand', token: '#00D3CC', className: 'bg-brand' },
-  { name: 'Brand ink', token: '#00807A', className: 'bg-brand-ink' },
-  { name: 'Brand tint', token: '#E6FAF9', className: 'bg-brand-tint' },
+  { name: 'Brand', token: '#409DA2', className: 'bg-brand' },
+  { name: 'Brand ink', token: '#276568', className: 'bg-brand-ink' },
+  { name: 'Brand tint', token: '#EDF7F8', className: 'bg-brand-tint' },
   { name: 'Ink', token: '#0A0A0A', className: 'bg-ink' },
   { name: 'Ink 2', token: '#6E6E73', className: 'bg-ink-2' },
   { name: 'Line', token: '#E8E8ED', className: 'bg-line' },
