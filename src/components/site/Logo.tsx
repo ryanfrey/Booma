@@ -11,7 +11,7 @@ export function Logo({ markOnly = false, className = '' }: LogoProps) {
   // Falls back to a text lockup if the real asset ever fails to load.
   if (imgFailed) {
     return (
-      <span className={`inline-flex items-center text-h3 font-bold tracking-tight ${className}`}>
+      <span className={`inline-flex items-center text-h1 font-bold tracking-tight ${className}`}>
         <span className="text-brand">B</span>
         {!markOnly && <span className="text-ink">ooma</span>}
       </span>
@@ -22,7 +22,7 @@ export function Logo({ markOnly = false, className = '' }: LogoProps) {
     <img
       src={markOnly ? '/booma-mark.png' : '/booma-logo.png'}
       alt="Booma"
-      className={`h-7 w-auto ${className}`}
+      className={`h-12 w-auto ${className}`}
       onError={() => setImgFailed(true)}
     />
   )
