@@ -1,9 +1,8 @@
 import { X } from 'lucide-react'
-import { CATEGORIES, CONDITIONS, ROOMS } from '../../lib/mockData'
+import { CATEGORIES, CONDITIONS } from '../../lib/mockData'
 import { Button } from '../ui/Button'
 
 export interface LotFilters {
-  rooms: string[]
   categories: string[]
   conditions: string[]
   auctionType: 'all' | 'timed' | 'live'
@@ -13,7 +12,6 @@ export interface LotFilters {
 }
 
 export const DEFAULT_FILTERS: LotFilters = {
-  rooms: [],
   categories: [],
   conditions: [],
   auctionType: 'all',
@@ -76,15 +74,6 @@ function FilterFields({ filters, onChange }: { filters: LotFilters; onChange: (n
             </label>
           ))}
         </div>
-      </div>
-
-      <div className="border-t border-line pt-6">
-        <CheckboxGroup
-          label="Room"
-          options={ROOMS}
-          selected={filters.rooms}
-          onChange={(rooms) => onChange({ ...filters, rooms })}
-        />
       </div>
 
       <div className="border-t border-line pt-6">
@@ -158,7 +147,6 @@ interface FilterPanelProps {
 
 export function FilterPanel({ filters, onChange, onClose }: FilterPanelProps) {
   const hasActiveFilters =
-    filters.rooms.length > 0 ||
     filters.categories.length > 0 ||
     filters.conditions.length > 0 ||
     filters.auctionType !== 'all' ||

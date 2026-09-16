@@ -18,7 +18,6 @@ export function filterLots(lots: MockLot[], filters: LotFilters, query: string):
 
   return lots.filter((lot) => {
     if (q && !lot.title.toLowerCase().includes(q)) return false
-    if (filters.rooms.length > 0 && !filters.rooms.includes(lot.room)) return false
     if (filters.categories.length > 0 && !filters.categories.includes(lot.category)) return false
     if (filters.conditions.length > 0 && !filters.conditions.includes(lot.condition)) return false
     if (filters.auctionType === 'live' && lot.status !== 'live') return false

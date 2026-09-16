@@ -1,10 +1,24 @@
-// Placeholder data for the pre-Supabase-wiring build (design brief step 2).
-// Shapes here are illustrative of the future `lots` / `auctions` schema, not
-// wired to anything real yet — that happens in build order step 4.
+// Placeholder data for the pre-Supabase-wiring build (design brief steps).
+// Shapes here are illustrative of the future `auctions` / `lots` schema, not
+// wired to anything real yet — that happens once real backend wiring lands.
 import type { LotStatus } from '../components/ui/StatusChip'
+
+export type AuctionStatus = 'preview' | 'live' | 'ended'
+
+export interface MockAuction {
+  id: string
+  title: string
+  location: string
+  status: AuctionStatus
+  /** When the live event starts (or started, for 'live'/'ended' auctions). */
+  liveAt: string
+  lotCount: number
+}
 
 export interface MockLot {
   id: string
+  auctionId: string
+  lotNumber: number
   title: string
   imageUrl?: string
   imageCount: number
@@ -15,29 +29,17 @@ export interface MockLot {
   endsAt: string
   status?: LotStatus
   soldPrice?: number
-  room: string
   category: string
-  auctionTitle: string
-  lotNumber: number
-  lotsInAuction: number
   viewerCount?: number
   /** undefined = no reserve on this lot. */
   reserveMet?: boolean
+  estimateLow: number
+  estimateHigh: number
   description: string
   dimensions: string
   conditionNotes: string
   collectionDetails: string
 }
-
-export interface MockUpcomingAuction {
-  id: string
-  title: string
-  startsAt: string
-  location: string
-  lotCount: number
-}
-
-export const ROOMS = ['Living room', 'Dining', 'Bedroom', 'Kitchen', 'Outdoor', 'Kids', 'Appliances'] as const
 
 export const CATEGORIES = ['Furniture', 'Appliances', 'Electronics', 'Kitchenware', 'Decor', 'Outdoor'] as const
 
@@ -49,9 +51,54 @@ const minutes = (n: number) => n * 60 * 1000
 const days = (n: number) => n * 24 * 60 * 60 * 1000
 const iso = (offsetMs: number) => new Date(NOW + offsetMs).toISOString()
 
+export const MOCK_AUCTIONS: MockAuction[] = [
+  {
+    id: 'auction-1',
+    title: 'Constantia Wine Estate Clearance',
+    location: 'Cape Town — collection only',
+    status: 'preview',
+    liveAt: iso(days(4)),
+    lotCount: 120,
+  },
+  {
+    id: 'auction-2',
+    title: 'Sandton Apartment Downsize',
+    location: 'Johannesburg — collection only',
+    status: 'preview',
+    liveAt: iso(days(6)),
+    lotCount: 65,
+  },
+  {
+    id: 'auction-3',
+    title: 'Ballito Beach House',
+    location: 'Durban — collection only',
+    status: 'preview',
+    liveAt: iso(days(9)),
+    lotCount: 90,
+  },
+  {
+    id: 'auction-4',
+    title: 'Waterkloof Study',
+    location: 'Pretoria — collection only',
+    status: 'preview',
+    liveAt: iso(days(5)),
+    lotCount: 40,
+  },
+  {
+    id: 'auction-5',
+    title: 'Stellenbosch Garden Sale',
+    location: 'Stellenbosch — collection only',
+    status: 'preview',
+    liveAt: iso(days(7)),
+    lotCount: 28,
+  },
+]
+
 export const MOCK_LOTS: MockLot[] = [
   {
     id: 'lot-1',
+    auctionId: 'auction-1',
+    lotNumber: 14,
     title: 'Mid-century oak dining table',
     imageCount: 4,
     condition: 'Good',
@@ -60,12 +107,10 @@ export const MOCK_LOTS: MockLot[] = [
     bidCount: 12,
     endsAt: iso(minutes(45)),
     status: 'winning',
-    room: 'Dining',
     category: 'Furniture',
-    auctionTitle: 'Southern Suburbs Estate',
-    lotNumber: 14,
-    lotsInAuction: 80,
     reserveMet: true,
+    estimateLow: 800,
+    estimateHigh: 1200,
     description:
       'Solid oak dining table from the estate’s formal dining room. Warm honey finish, tapered legs, seats six comfortably.',
     dimensions: '180cm L x 90cm W x 75cm H',
@@ -74,6 +119,8 @@ export const MOCK_LOTS: MockLot[] = [
   },
   {
     id: 'lot-2',
+    auctionId: 'auction-2',
+    lotNumber: 22,
     title: 'Retro two-door fridge, some rust on the door',
     imageCount: 3,
     condition: 'Fair',
@@ -82,12 +129,10 @@ export const MOCK_LOTS: MockLot[] = [
     bidCount: 7,
     endsAt: iso(minutes(18)),
     status: 'outbid',
-    room: 'Appliances',
     category: 'Appliances',
-    auctionTitle: 'Northcliff Downsize',
-    lotNumber: 22,
-    lotsInAuction: 46,
     reserveMet: false,
+    estimateLow: 500,
+    estimateHigh: 900,
     description: 'Working two-door fridge-freezer with a distinctive retro shape. Powers on and cools normally.',
     dimensions: '70cm W x 65cm D x 170cm H',
     conditionNotes: 'Surface rust on the lower door edge. Interior clean, seals intact, compressor runs quietly.',
@@ -95,6 +140,8 @@ export const MOCK_LOTS: MockLot[] = [
   },
   {
     id: 'lot-3',
+    auctionId: 'auction-3',
+    lotNumber: 8,
     title: 'Set of 6 upholstered dining chairs',
     imageCount: 5,
     condition: 'Like new',
@@ -102,13 +149,9 @@ export const MOCK_LOTS: MockLot[] = [
     currentBid: 1250,
     bidCount: 18,
     endsAt: iso(minutes(6)),
-    status: 'live',
-    room: 'Dining',
     category: 'Furniture',
-    auctionTitle: 'Umhlanga Collection',
-    lotNumber: 8,
-    lotsInAuction: 60,
-    viewerCount: 34,
+    estimateLow: 1000,
+    estimateHigh: 1800,
     description: 'Six matching dining chairs in oatmeal linen with solid wood legs. Barely used, from a show home.',
     dimensions: '48cm W x 55cm D x 90cm H (each)',
     conditionNotes: 'No visible marks or wear. Sold as a set of six.',
@@ -116,6 +159,8 @@ export const MOCK_LOTS: MockLot[] = [
   },
   {
     id: 'lot-4',
+    auctionId: 'auction-4',
+    lotNumber: 3,
     title: 'Antique writing desk with brass handles',
     imageCount: 4,
     condition: 'Good',
@@ -125,11 +170,9 @@ export const MOCK_LOTS: MockLot[] = [
     bidCount: 9,
     endsAt: iso(-hours(2)),
     status: 'sold',
-    room: 'Living room',
     category: 'Furniture',
-    auctionTitle: 'Waterkloof Study',
-    lotNumber: 3,
-    lotsInAuction: 40,
+    estimateLow: 1800,
+    estimateHigh: 2500,
     description: 'Campaign-style writing desk with original brass drawer handles and a leather-inset top.',
     dimensions: '120cm W x 60cm D x 76cm H',
     conditionNotes: 'One handle has a small dent. Leather top shows light patina consistent with age.',
@@ -137,6 +180,8 @@ export const MOCK_LOTS: MockLot[] = [
   },
   {
     id: 'lot-5',
+    auctionId: 'auction-1',
+    lotNumber: 15,
     title: 'Scandinavian 3-seater sofa in charcoal linen',
     imageCount: 4,
     condition: 'Good',
@@ -144,12 +189,10 @@ export const MOCK_LOTS: MockLot[] = [
     currentBid: 3400,
     bidCount: 21,
     endsAt: iso(hours(5)),
-    room: 'Living room',
     category: 'Furniture',
-    auctionTitle: 'Southern Suburbs Estate',
-    lotNumber: 15,
-    lotsInAuction: 80,
     reserveMet: false,
+    estimateLow: 3000,
+    estimateHigh: 4200,
     description: 'Low-profile 3-seater sofa, charcoal linen upholstery, solid beech legs.',
     dimensions: '210cm W x 90cm D x 80cm H',
     conditionNotes: 'Light fading on the arm rests from sun exposure. Cushions retain their shape well.',
@@ -157,6 +200,8 @@ export const MOCK_LOTS: MockLot[] = [
   },
   {
     id: 'lot-6',
+    auctionId: 'auction-2',
+    lotNumber: 30,
     title: 'Cast iron gas 5-burner hob',
     imageCount: 3,
     condition: 'Good',
@@ -164,11 +209,9 @@ export const MOCK_LOTS: MockLot[] = [
     currentBid: 1800,
     bidCount: 5,
     endsAt: iso(days(2) + hours(3)),
-    room: 'Kitchen',
     category: 'Appliances',
-    auctionTitle: 'Northcliff Downsize',
-    lotNumber: 30,
-    lotsInAuction: 46,
+    estimateLow: 1500,
+    estimateHigh: 2200,
     description: 'Freestanding 5-burner gas hob with cast iron pan supports. Removed during a kitchen renovation.',
     dimensions: '90cm W x 52cm D',
     conditionNotes: 'Light staining around the burners from normal use. All ignitors spark and burners light evenly.',
@@ -176,6 +219,8 @@ export const MOCK_LOTS: MockLot[] = [
   },
   {
     id: 'lot-7',
+    auctionId: 'auction-5',
+    lotNumber: 11,
     title: 'Weber kettle braai, 57cm, well used',
     imageCount: 2,
     condition: 'Fair',
@@ -183,11 +228,9 @@ export const MOCK_LOTS: MockLot[] = [
     currentBid: 480,
     bidCount: 3,
     endsAt: iso(days(1) + hours(6)),
-    room: 'Outdoor',
     category: 'Outdoor',
-    auctionTitle: 'Stellenbosch Garden Sale',
-    lotNumber: 11,
-    lotsInAuction: 28,
+    estimateLow: 400,
+    estimateHigh: 700,
     description: 'Classic 57cm Weber kettle braai. Well loved, still holds heat and seals well.',
     dimensions: '57cm diameter',
     conditionNotes: 'Exterior paint worn in places, grate shows normal use. Lid seals properly, no rust-through.',
@@ -195,6 +238,8 @@ export const MOCK_LOTS: MockLot[] = [
   },
   {
     id: 'lot-8',
+    auctionId: 'auction-3',
+    lotNumber: 40,
     title: 'Solid wood bunk bed with trundle',
     imageCount: 4,
     condition: 'Good',
@@ -202,11 +247,9 @@ export const MOCK_LOTS: MockLot[] = [
     currentBid: 1100,
     bidCount: 6,
     endsAt: iso(days(3)),
-    room: 'Kids',
     category: 'Furniture',
-    auctionTitle: 'Umhlanga Collection',
-    lotNumber: 40,
-    lotsInAuction: 60,
+    estimateLow: 900,
+    estimateHigh: 1400,
     description: 'Solid pine bunk bed with a pull-out trundle for a third sleeper. Flat-packs for transport.',
     dimensions: '200cm L x 100cm W x 160cm H',
     conditionNotes: 'Minor scuffs on the ladder rungs. All slats and fittings included.',
@@ -214,6 +257,8 @@ export const MOCK_LOTS: MockLot[] = [
   },
   {
     id: 'lot-9',
+    auctionId: 'auction-4',
+    lotNumber: 18,
     title: 'King-size headboard, tufted velvet',
     imageCount: 3,
     condition: 'Like new',
@@ -221,12 +266,10 @@ export const MOCK_LOTS: MockLot[] = [
     currentBid: 890,
     bidCount: 4,
     endsAt: iso(hours(14)),
-    room: 'Bedroom',
     category: 'Furniture',
-    auctionTitle: 'Waterkloof Study',
-    lotNumber: 18,
-    lotsInAuction: 40,
     reserveMet: true,
+    estimateLow: 700,
+    estimateHigh: 1100,
     description: 'King-size tufted headboard in deep green velvet, freestanding with weighted feet.',
     dimensions: '190cm W x 130cm H',
     conditionNotes: 'No marks on the fabric. Barely used — from a spare room.',
@@ -234,6 +277,8 @@ export const MOCK_LOTS: MockLot[] = [
   },
   {
     id: 'lot-10',
+    auctionId: 'auction-1',
+    lotNumber: 55,
     title: '12-piece stoneware dinner set',
     imageCount: 3,
     condition: 'Like new',
@@ -241,11 +286,9 @@ export const MOCK_LOTS: MockLot[] = [
     currentBid: 340,
     bidCount: 2,
     endsAt: iso(minutes(55)),
-    room: 'Kitchen',
     category: 'Kitchenware',
-    auctionTitle: 'Southern Suburbs Estate',
-    lotNumber: 55,
-    lotsInAuction: 80,
+    estimateLow: 250,
+    estimateHigh: 450,
     description: '12-piece stoneware dinner set in matte white — 4 dinner plates, 4 side plates, 4 bowls.',
     dimensions: 'Dinner plate 27cm diameter',
     conditionNotes: 'No chips or cracks. Light use only, dishwasher safe.',
@@ -253,6 +296,8 @@ export const MOCK_LOTS: MockLot[] = [
   },
   {
     id: 'lot-11',
+    auctionId: 'auction-2',
+    lotNumber: 6,
     title: 'Standing floor lamp, brushed brass',
     imageCount: 2,
     condition: 'Good',
@@ -260,11 +305,9 @@ export const MOCK_LOTS: MockLot[] = [
     currentBid: 260,
     bidCount: 1,
     endsAt: iso(hours(9)),
-    room: 'Living room',
     category: 'Decor',
-    auctionTitle: 'Northcliff Downsize',
-    lotNumber: 6,
-    lotsInAuction: 46,
+    estimateLow: 200,
+    estimateHigh: 350,
     description: 'Brushed brass standing lamp with a linen drum shade. Foot switch, in full working order.',
     dimensions: '35cm diameter base, 155cm H',
     conditionNotes: 'A couple of small tarnish spots on the pole. Shade is clean, no marks.',
@@ -272,6 +315,8 @@ export const MOCK_LOTS: MockLot[] = [
   },
   {
     id: 'lot-12',
+    auctionId: 'auction-3',
+    lotNumber: 9,
     title: '55" LED television, no remote',
     imageCount: 3,
     condition: 'Fair',
@@ -279,41 +324,13 @@ export const MOCK_LOTS: MockLot[] = [
     currentBid: 2200,
     bidCount: 15,
     endsAt: iso(minutes(3)),
-    status: 'live',
-    room: 'Living room',
     category: 'Electronics',
-    auctionTitle: 'Umhlanga Collection',
-    lotNumber: 9,
-    lotsInAuction: 60,
-    viewerCount: 58,
     reserveMet: true,
+    estimateLow: 1800,
+    estimateHigh: 2600,
     description: '55" LED television, full HD. Powers on and displays correctly. Sold without a remote.',
     dimensions: '123cm W x 71cm H',
     conditionNotes: 'Minor scuff on the lower bezel. Screen has no dead pixels or marks.',
     collectionDetails: 'Collection from Umhlanga, Durban, or nationwide courier can be arranged at the buyer’s cost.',
-  },
-]
-
-export const UPCOMING_AUCTIONS: MockUpcomingAuction[] = [
-  {
-    id: 'auction-1',
-    title: 'Constantia Wine Estate Clearance',
-    startsAt: iso(days(4)),
-    location: 'Cape Town — collection only',
-    lotCount: 120,
-  },
-  {
-    id: 'auction-2',
-    title: 'Sandton Apartment Downsize',
-    startsAt: iso(days(6)),
-    location: 'Johannesburg — collection only',
-    lotCount: 65,
-  },
-  {
-    id: 'auction-3',
-    title: 'Ballito Beach House',
-    startsAt: iso(days(9)),
-    location: 'Durban — collection only',
-    lotCount: 90,
   },
 ]

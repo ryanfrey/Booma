@@ -16,6 +16,8 @@ export interface LotCardProps {
   endsAt: string
   status?: LotStatus
   soldPrice?: number
+  estimateLow?: number
+  estimateHigh?: number
   watched?: boolean
   onToggleWatch?: () => void
   onQuickBid?: () => void
@@ -36,6 +38,8 @@ export function LotCard({
   endsAt,
   status,
   soldPrice,
+  estimateLow,
+  estimateHigh,
   watched = false,
   onToggleWatch,
   onQuickBid,
@@ -102,6 +106,12 @@ export function LotCard({
             {isSold ? 'Sold' : `${bidCount} ${bidCount === 1 ? 'bid' : 'bids'}`}
           </span>
         </div>
+
+        {!isSold && estimateLow !== undefined && estimateHigh !== undefined && (
+          <p className="mt-0.5 text-micro text-ink-2">
+            Est. {formatZARWhole(estimateLow)} – {formatZARWhole(estimateHigh)}
+          </p>
+        )}
 
         {!isSold && <Countdown endsAt={endsAt} className="mt-1 block text-small" />}
       </Link>

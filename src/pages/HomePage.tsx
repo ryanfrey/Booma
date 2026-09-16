@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { LotCard } from '../components/ui/LotCard'
 import { useWatchlist } from '../hooks/useWatchlist'
-import { MOCK_LOTS, ROOMS, UPCOMING_AUCTIONS } from '../lib/mockData'
+import { MOCK_AUCTIONS, MOCK_LOTS } from '../lib/mockData'
 
 const HOW_IT_WORKS = [
   { icon: UserPlus, title: 'Register', body: 'Create an account and verify your phone and card — takes a minute.' },
@@ -35,6 +35,36 @@ export function HomePage() {
 
   return (
     <div>
+      {/* Upcoming auctions — the main entry point: click through to an auction's
+          lots, open for pre-bidding now ahead of its live event. */}
+      <section className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6">
+        <SectionHeading title="Upcoming auctions" />
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          {MOCK_AUCTIONS.map((auction) => (
+            <div key={auction.id} className="rounded-card border border-line p-5">
+              <Link to={`/auctions/${auction.id}`} className="block">
+                <p className="text-small font-semibold text-brand-ink">
+                  Live {new Date(auction.liveAt).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
+                </p>
+                <h3 className="mt-1 text-h3 tracking-tight text-ink">{auction.title}</h3>
+                <p className="mt-1 text-small text-ink-2">{auction.location}</p>
+                <p className="text-small text-ink-2">{auction.lotCount} lots — pre-bidding open now</p>
+              </Link>
+              <div className="mt-4 flex gap-2">
+                <Link to={`/auctions/${auction.id}`}>
+                  <Button variant="primary" size="md">
+                    View lots
+                  </Button>
+                </Link>
+                <Button variant="outline" size="md">
+                  Remind me
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Hero */}
       <section className="mx-auto max-w-[1280px] px-4 py-16 sm:px-6 sm:py-24">
         <div className="grid items-center gap-10 lg:grid-cols-2">
@@ -77,7 +107,6 @@ export function HomePage() {
                 bidCount={lot.bidCount}
                 endsAt={lot.endsAt}
                 status={lot.status}
-                lotProgress={`Lot ${lot.lotNumber} of ${lot.lotsInAuction}`}
                 viewerCount={lot.viewerCount}
                 watched={isWatched(lot.id)}
                 onToggleWatch={() => toggle(lot.id)}
@@ -86,22 +115,6 @@ export function HomePage() {
           </div>
         </section>
       )}
-
-      {/* Shop by room */}
-      <section className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6">
-        <SectionHeading title="Shop by room" />
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {ROOMS.map((room) => (
-            <Link
-              key={room}
-              to={`/listings?room=${encodeURIComponent(room)}`}
-              className="group relative flex aspect-square items-end overflow-hidden rounded-tile bg-surface-2 p-4"
-            >
-              <span className="text-h3 font-semibold tracking-tight text-ink">{room}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
 
       {/* Ending soon */}
       <section className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6">
@@ -118,30 +131,12 @@ export function HomePage() {
               bidCount={lot.bidCount}
               endsAt={lot.endsAt}
               status={lot.status}
+              estimateLow={lot.estimateLow}
+              estimateHigh={lot.estimateHigh}
               watched={isWatched(lot.id)}
               onToggleWatch={() => toggle(lot.id)}
               onQuickBid={() => {}}
             />
-          ))}
-        </div>
-      </section>
-
-      {/* Upcoming auctions */}
-      <section className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6">
-        <SectionHeading title="Upcoming auctions" />
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          {UPCOMING_AUCTIONS.map((auction) => (
-            <div key={auction.id} className="rounded-card border border-line p-5">
-              <p className="text-small font-semibold text-brand-ink">
-                {new Date(auction.startsAt).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
-              </p>
-              <h3 className="mt-1 text-h3 tracking-tight text-ink">{auction.title}</h3>
-              <p className="mt-1 text-small text-ink-2">{auction.location}</p>
-              <p className="text-small text-ink-2">{auction.lotCount} lots</p>
-              <Button variant="outline" size="md" className="mt-4">
-                Remind me
-              </Button>
-            </div>
           ))}
         </div>
       </section>

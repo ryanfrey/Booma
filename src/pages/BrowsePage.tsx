@@ -22,7 +22,6 @@ export function BrowsePage() {
   const [params] = useSearchParams()
   const [filters, setFilters] = useState<LotFilters>(() => ({
     ...DEFAULT_FILTERS,
-    rooms: params.get('room') ? [params.get('room')!] : [],
     auctionType: params.get('live') ? 'live' : 'all',
   }))
   const [sort, setSort] = useState<SortOption>('ending-soonest')
@@ -114,6 +113,8 @@ export function BrowsePage() {
                   endsAt={lot.endsAt}
                   status={lot.status}
                   soldPrice={lot.soldPrice}
+                  estimateLow={lot.estimateLow}
+                  estimateHigh={lot.estimateHigh}
                   watched={isWatched(lot.id)}
                   onToggleWatch={() => toggle(lot.id)}
                   onQuickBid={lot.status === 'sold' ? undefined : () => {}}

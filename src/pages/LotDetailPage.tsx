@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useParams } from 'react-router-dom'
 import { BidHistory } from '../components/site/BidHistory'
 import { BidPanel } from '../components/site/BidPanel'
 import { BidSheet } from '../components/site/BidSheet'
@@ -8,7 +8,8 @@ import { LotCard } from '../components/ui/LotCard'
 import { LotGrid } from '../components/ui/LotGrid'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { useMockLiveLot } from '../hooks/useMockLiveLot'
-import { MOCK_LOTS } from '../lib/mockData'
+import { formatZARWhole } from '../lib/currency'
+import { MOCK_AUCTIONS, MOCK_LOTS } from '../lib/mockData'
 
 export function LotDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -23,19 +24,28 @@ export function LotDetailPage() {
 
   if (!lot) return <Navigate to="/listings" replace />
 
-  const otherLots = MOCK_LOTS.filter((l) => l.auctionTitle === lot.auctionTitle && l.id !== lot.id).slice(0, 4)
+  const auction = MOCK_AUCTIONS.find((a) => a.id === lot.auctionId)
+  const otherLots = MOCK_LOTS.filter((l) => l.auctionId === lot.auctionId && l.id !== lot.id).slice(0, 4)
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-8 pb-28 sm:px-6 lg:pb-8">
-      <p className="text-small text-ink-2">
-        {lot.auctionTitle} · Lot {lot.lotNumber} of {lot.lotsInAuction}
-      </p>
+      {auction && (
+        <p className="text-small text-ink-2">
+          <Link to={`/auctions/${auction.id}`} className="hover:text-brand-ink">
+            {auction.title}
+          </Link>{' '}
+          · Lot {lot.lotNumber} of {auction.lotCount}
+        </p>
+      )}
 
       <div className="mt-4 grid gap-10 lg:grid-cols-[1fr_360px]">
         <div>
           <h1 className="text-h1 tracking-tight text-ink">{lot.title}</h1>
           <p className="mt-1 text-small text-ink-2">
             {lot.condition} · {lot.location}
+          </p>
+          <p className="mt-1 text-small text-ink-2">
+            Estimate {formatZARWhole(lot.estimateLow)} – {formatZARWhole(lot.estimateHigh)}
           </p>
 
           <div className="mt-5">
@@ -83,6 +93,8 @@ export function LotDetailPage() {
                       endsAt={other.endsAt}
                       status={other.status}
                       soldPrice={other.soldPrice}
+                      estimateLow={other.estimateLow}
+                      estimateHigh={other.estimateHigh}
                       watched={isWatched(other.id)}
                       onToggleWatch={() => toggle(other.id)}
                     />

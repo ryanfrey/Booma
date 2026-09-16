@@ -1,19 +1,11 @@
 import { Heart, Radio } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { LiveDot } from '../ui/LiveDot'
 import { AccountMenu } from './AccountMenu'
 import { Logo } from './Logo'
 import { SearchBar } from './SearchBar'
-import { CategoryChips } from './CategoryChips'
-import { ROOMS } from '../../lib/mockData'
 
 export function Header({ watchCount = 0, hasLiveLots = false }: { watchCount?: number; hasLiveLots?: boolean }) {
-  const navigate = useNavigate()
-
-  const goToRoom = (room: string) => {
-    navigate(room === 'All rooms' ? '/listings' : `/listings?room=${encodeURIComponent(room)}`)
-  }
-
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-surface">
       <div className="mx-auto flex max-w-[1280px] items-center gap-4 px-4 py-3 sm:px-6">
@@ -48,10 +40,6 @@ export function Header({ watchCount = 0, hasLiveLots = false }: { watchCount?: n
       </div>
 
       <SearchBar className="border-t border-line px-4 py-2 md:hidden" />
-
-      <div className="border-t border-line px-4 py-2 sm:px-6">
-        <CategoryChips items={['All rooms', ...ROOMS]} active="All rooms" onSelect={goToRoom} />
-      </div>
     </header>
   )
 }
