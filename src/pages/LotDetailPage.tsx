@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { BidHistory } from '../components/site/BidHistory'
 import { BidPanel } from '../components/site/BidPanel'
@@ -9,23 +9,58 @@ import { LotGrid } from '../components/ui/LotGrid'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { useMockLiveLot } from '../hooks/useMockLiveLot'
 import { formatZARWhole } from '../lib/currency'
-import { MOCK_AUCTIONS, MOCK_LOTS } from '../lib/mockData'
+import { getLotWithAuction } from '../lib/auctions'
+import type { MockAuction, MockLot } from '../lib/mockData'
+
+const PLACEHOLDER_LOT: MockLot = {
+  id: 'placeholder',
+  auctionId: 'placeholder',
+  lotNumber: 0,
+  title: '',
+  imageCount: 0,
+  condition: '',
+  location: '',
+  currentBid: 0,
+  bidCount: 0,
+  endsAt: new Date().toISOString(),
+  category: '',
+  estimateLow: 0,
+  estimateHigh: 0,
+  description: '',
+  dimensions: '',
+  conditionNotes: '',
+  collectionDetails: '',
+}
 
 export function LotDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const lot = MOCK_LOTS.find((l) => l.id === id)
+  const [lot, setLot] = useState<MockLot | null | undefined>(undefined)
+  const [auction, setAuction] = useState<MockAuction | undefined>(undefined)
+  const [otherLots, setOtherLots] = useState<MockLot[]>([])
   const [bidSheetOpen, setBidSheetOpen] = useState(false)
   const { isWatched, toggle } = useWatchlist()
 
-  // Lot is always defined below this guard, but hooks can't be called
-  // conditionally — fall back to the first mock lot so the hook has a
-  // stable shape, then redirect immediately if there's really no match.
-  const { currentBid, bidCount, history, placeBid } = useMockLiveLot(lot ?? MOCK_LOTS[0])
+  useEffect(() => {
+    if (!id) return
+    let cancelled = false
+    getLotWithAuction(id).then((result) => {
+      if (cancelled) return
+      setLot(result?.lot ?? null)
+      setAuction(result?.auction)
+      setOtherLots(result?.siblingLots.slice(0, 4) ?? [])
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [id])
 
-  if (!lot) return <Navigate to="/listings" replace />
+  // Hooks can't be called conditionally — fall back to a stable placeholder
+  // lot while the real one loads, then redirect immediately if there's
+  // really no match.
+  const { currentBid, bidCount, history, placeBid } = useMockLiveLot(lot ?? PLACEHOLDER_LOT)
 
-  const auction = MOCK_AUCTIONS.find((a) => a.id === lot.auctionId)
-  const otherLots = MOCK_LOTS.filter((l) => l.auctionId === lot.auctionId && l.id !== lot.id).slice(0, 4)
+  if (lot === null) return <Navigate to="/listings" replace />
+  if (lot === undefined) return null
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-8 pb-28 sm:px-6 lg:pb-8">

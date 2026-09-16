@@ -1,9 +1,11 @@
 import { CreditCard, Gavel, UserPlus } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { LotCard } from '../components/ui/LotCard'
 import { useWatchlist } from '../hooks/useWatchlist'
-import { MOCK_AUCTIONS, MOCK_LOTS } from '../lib/mockData'
+import { listAllLots, listUpcomingAuctions } from '../lib/auctions'
+import type { MockAuction, MockLot } from '../lib/mockData'
 
 const HOW_IT_WORKS = [
   { icon: UserPlus, title: 'Register', body: 'Create an account and verify your phone and card — takes a minute.' },
@@ -26,9 +28,25 @@ function SectionHeading({ title, action }: { title: string; action?: { label: st
 
 export function HomePage() {
   const { isWatched, toggle } = useWatchlist()
+  const [auctions, setAuctions] = useState<MockAuction[]>([])
+  const [lots, setLots] = useState<MockLot[]>([])
 
-  const liveLots = MOCK_LOTS.filter((lot) => lot.status === 'live')
-  const endingSoon = [...MOCK_LOTS]
+  useEffect(() => {
+    let cancelled = false
+    Promise.all([listUpcomingAuctions(), listAllLots()]).then(([auctionData, lotData]) => {
+      if (cancelled) return
+      setAuctions(auctionData)
+      setLots(lotData)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // No per-lot real-time status is tracked yet, so "live" simply means the
+  // lot's auction has been put into its live session.
+  const liveLots = lots.filter((lot) => lot.status !== 'sold' && auctions.find((a) => a.id === lot.auctionId)?.status === 'live')
+  const endingSoon = [...lots]
     .filter((lot) => lot.status !== 'sold')
     .sort((a, b) => new Date(a.endsAt).getTime() - new Date(b.endsAt).getTime())
     .slice(0, 4)
@@ -40,7 +58,7 @@ export function HomePage() {
       <section className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6">
         <SectionHeading title="Upcoming auctions" />
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          {MOCK_AUCTIONS.map((auction) => (
+          {auctions.map((auction) => (
             <div key={auction.id} className="rounded-card border border-line p-5">
               <Link to={`/auctions/${auction.id}`} className="block">
                 <p className="text-small font-semibold text-brand-ink">

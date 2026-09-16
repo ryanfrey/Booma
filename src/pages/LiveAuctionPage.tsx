@@ -1,12 +1,13 @@
 import { Gavel, List, Pause, Play, Radio } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { PriceTicker } from '../components/ui/PriceTicker'
 import { useMockLiveAuction, type CallStage } from '../hooks/useMockLiveAuction'
 import { formatZARWhole } from '../lib/currency'
 import { getNextMinBid } from '../lib/increments'
-import { MOCK_AUCTIONS, MOCK_LOTS } from '../lib/mockData'
+import { getAuctionWithLots } from '../lib/auctions'
+import type { MockAuction, MockLot } from '../lib/mockData'
 
 const CALL_LABEL: Record<CallStage, string> = {
   open: 'Open for bids',
@@ -19,14 +20,28 @@ const CALL_LABEL: Record<CallStage, string> = {
 
 export function LiveAuctionPage() {
   const { id } = useParams<{ id: string }>()
-  const auction = MOCK_AUCTIONS.find((a) => a.id === id)
+  const [auction, setAuction] = useState<MockAuction | null | undefined>(undefined)
+  const [lots, setLots] = useState<MockLot[]>([])
   const [view, setView] = useState<'stage' | 'list'>('stage')
 
-  const lots = MOCK_LOTS.filter((lot) => lot.auctionId === id).sort((a, b) => a.lotNumber - b.lotNumber)
+  useEffect(() => {
+    if (!id) return
+    let cancelled = false
+    getAuctionWithLots(id).then((result) => {
+      if (cancelled) return
+      setAuction(result?.auction ?? null)
+      setLots(result?.lots.sort((a, b) => a.lotNumber - b.lotNumber) ?? [])
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [id])
+
   const { currentLot, currentIndex, isDone, price, remainingMs, stage, outcomes, feed, paused, setPaused, placeBid } =
     useMockLiveAuction(lots)
 
-  if (!auction) return <Navigate to="/listings" replace />
+  if (auction === null) return <Navigate to="/listings" replace />
+  if (auction === undefined) return null
 
   const seconds = Math.ceil(remainingMs / 1000)
   const isResolving = stage === 'sold' || stage === 'passed'

@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import { SiteLayout } from './components/site/SiteLayout'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { AdminRoute } from './components/AdminRoute'
 import { AuthPage } from './pages/AuthPage'
 import { HomePage } from './pages/HomePage'
 import { BrowsePage } from './pages/BrowsePage'
@@ -11,6 +12,8 @@ import { SellerOnboardingPage } from './pages/SellerOnboardingPage'
 import { CreateListingPage } from './pages/CreateListingPage'
 import { SellerDashboardPage } from './pages/SellerDashboardPage'
 import { StyleguidePage } from './pages/StyleguidePage'
+import { AdminAuctionsPage } from './pages/admin/AdminAuctionsPage'
+import { AdminAuctionDetailPage } from './pages/admin/AdminAuctionDetailPage'
 
 function App() {
   return (
@@ -45,6 +48,22 @@ function App() {
             <ProtectedRoute>
               <SellerDashboardPage />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminAuctionsPage />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/auctions/:id"
+          element={
+            <AdminRoute>
+              <AdminAuctionDetailPage />
+            </AdminRoute>
           }
         />
       </Route>

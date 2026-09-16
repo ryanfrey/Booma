@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { LotCard } from '../components/ui/LotCard'
 import { LotGrid } from '../components/ui/LotGrid'
@@ -5,16 +6,30 @@ import { EmptyState } from '../components/ui/EmptyState'
 import { Button } from '../components/ui/Button'
 import { PackageSearch, Radio } from 'lucide-react'
 import { useWatchlist } from '../hooks/useWatchlist'
-import { MOCK_AUCTIONS, MOCK_LOTS } from '../lib/mockData'
+import { getAuctionWithLots } from '../lib/auctions'
+import type { MockAuction, MockLot } from '../lib/mockData'
 
 export function AuctionPage() {
   const { id } = useParams<{ id: string }>()
-  const auction = MOCK_AUCTIONS.find((a) => a.id === id)
   const { isWatched, toggle } = useWatchlist()
+  const [auction, setAuction] = useState<MockAuction | null | undefined>(undefined)
+  const [lots, setLots] = useState<MockLot[]>([])
 
-  if (!auction) return <Navigate to="/listings" replace />
+  useEffect(() => {
+    if (!id) return
+    let cancelled = false
+    getAuctionWithLots(id).then((result) => {
+      if (cancelled) return
+      setAuction(result?.auction ?? null)
+      setLots(result?.lots ?? [])
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [id])
 
-  const lots = MOCK_LOTS.filter((lot) => lot.auctionId === auction.id).sort((a, b) => a.lotNumber - b.lotNumber)
+  if (auction === null) return <Navigate to="/listings" replace />
+  if (auction === undefined) return null
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6">

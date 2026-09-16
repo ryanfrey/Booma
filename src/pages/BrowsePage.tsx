@@ -9,7 +9,8 @@ import { LotCardSkeleton } from '../components/ui/Skeleton'
 import { LotGrid } from '../components/ui/LotGrid'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { filterLots, sortLots, type SortOption } from '../lib/lotFilters'
-import { MOCK_LOTS } from '../lib/mockData'
+import { listAllLots } from '../lib/auctions'
+import type { MockLot } from '../lib/mockData'
 
 const SORT_LABELS: Record<SortOption, string> = {
   'ending-soonest': 'Ending soonest',
@@ -31,20 +32,25 @@ export function BrowsePage() {
   const { isWatched, toggle } = useWatchlist()
   const query = params.get('q') ?? ''
   const watchlistOnly = params.get('watchlist') === '1'
+  const [allLots, setAllLots] = useState<MockLot[]>([])
 
-  // Mock loading delay so the skeleton state (quality bar: "skeletons instead
-  // of spinners") has something to show — real loading comes with Supabase
-  // wiring in a later build step.
   useEffect(() => {
+    let cancelled = false
     setLoading(true)
-    const id = setTimeout(() => setLoading(false), 300)
-    return () => clearTimeout(id)
-  }, [filters, sort, query, watchlistOnly])
+    listAllLots().then((data) => {
+      if (cancelled) return
+      setAllLots(data)
+      setLoading(false)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const lots = useMemo(() => {
-    const base = watchlistOnly ? MOCK_LOTS.filter((lot) => isWatched(lot.id)) : MOCK_LOTS
+    const base = watchlistOnly ? allLots.filter((lot) => isWatched(lot.id)) : allLots
     return sortLots(filterLots(base, filters, query), sort)
-  }, [filters, sort, query, watchlistOnly, isWatched])
+  }, [allLots, filters, sort, query, watchlistOnly, isWatched])
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6">

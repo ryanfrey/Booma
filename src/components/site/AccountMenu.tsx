@@ -1,4 +1,4 @@
-import { ChevronDown, LayoutList, LogOut, Plus, User } from 'lucide-react'
+import { ChevronDown, Gavel, LayoutList, LogOut, Plus, User } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
@@ -83,6 +83,19 @@ export function AccountMenu() {
             >
               <User size={16} strokeWidth={1.5} /> Start selling
             </Link>
+          )}
+          {profile?.is_admin && (
+            <>
+              <div className="border-t border-line" />
+              <Link
+                to="/admin"
+                role="menuitem"
+                className="flex items-center gap-2 px-3 py-2 text-small text-ink hover:bg-surface-2"
+                onClick={() => setOpen(false)}
+              >
+                <Gavel size={16} strokeWidth={1.5} /> Admin
+              </Link>
+            </>
           )}
           <div className="border-t border-line" />
           <button
