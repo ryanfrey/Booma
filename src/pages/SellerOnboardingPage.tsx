@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -35,6 +35,9 @@ export function SellerOnboardingPage() {
       <div className="seller-onboarding">
         <h1>You're all set up to sell</h1>
         <p>Payouts go to the bank account you linked, minus Booma's platform fee.</p>
+        <p>
+          <Link to="/sell/new">Create a listing</Link>
+        </p>
       </div>
     )
   }

@@ -227,11 +227,73 @@ button {
   padding: 0 24px;
 }
 
-.seller-onboarding .auth-form select {
+.auth-form select,
+.auth-form textarea {
   font: inherit;
   padding: 8px 10px;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--bg);
   color: var(--text-h);
+  resize: vertical;
+}
+
+.listing-thumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.listing-photos {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
+
+.listing-photos img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.create-listing-page {
+  max-width: 480px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+
+.photo-preview-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.photo-preview-list li {
+  position: relative;
+}
+
+.photo-preview-list img {
+  width: 88px;
+  height: 88px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.photo-preview-list button {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  font-size: 12px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
 }

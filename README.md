@@ -27,6 +27,17 @@ Paystack's hosted checkout and back. Live price/bid updates come through Supabas
 (`postgres_changes` on `listings` and `bids`, the latter restricted to non-payment columns — see
 Security below).
 
+## Listings
+
+`src/pages/CreateListingPage.tsx` (`/sell/new`, gated to `profile.is_seller`) creates a listing as
+`draft`, uploads any photos to the `listing-photos` Storage bucket
+(`listings/{listingId}/{uuid}.{ext}`) and inserts matching `listing_images` rows, then flips the
+listing to `live`. Photos are optional and kept in their original format (jpeg/png/webp) rather
+than transcoded to webp, despite the storage path convention implying `.webp` — simpler for an
+MVP, worth revisiting if consistent thumbnails matter later. A failed upload partway through
+leaves the listing stuck in `draft` (invisible, since there's no "my listings" page yet to find
+and retry it from) — a known rough edge, not a data-integrity problem.
+
 ## Payments — Paystack
 
 Stripe Connect doesn't support South African-registered merchants directly; sellers there go
@@ -93,9 +104,9 @@ select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret';
 - `categories` now has RLS enabled with a public-read policy (it's a platform-managed lookup table,
   no client-facing write path exists). `payments` now has a policy letting the buyer and seller on
   a payment read that row — nothing else (rows are only ever written by `close_ended_auctions()`/
-  `close-auctions`, both privileged). `listing_images` still has RLS enabled with zero policies
-  (nobody, including the listing's owner, can read/write it via the API yet) — needs the same kind
-  of pass once image upload/display is built.
+  `close-auctions`, both privileged). `listing_images` now has RLS too: readable wherever the
+  parent listing is (a public listing, or the seller's own draft), writable only by that listing's
+  seller.
 - `pg_net`'s extension registration landed in the `public` schema (a lint warning); it doesn't
   support `ALTER EXTENSION ... SET SCHEMA`, and its functions (`net.http_post`) already live in
   their own `net` schema regardless, so this is cosmetic — left as-is rather than risk the cron

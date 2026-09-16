@@ -5,6 +5,7 @@ import { HomePage } from './pages/HomePage'
 import { ListingsPage } from './pages/ListingsPage'
 import { ListingDetailPage } from './pages/ListingDetailPage'
 import { SellerOnboardingPage } from './pages/SellerOnboardingPage'
+import { CreateListingPage } from './pages/CreateListingPage'
 
 function App() {
   return (
@@ -17,6 +18,14 @@ function App() {
         element={
           <ProtectedRoute>
             <SellerOnboardingPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/sell/new"
+        element={
+          <ProtectedRoute>
+            <CreateListingPage />
           </ProtectedRoute>
         }
       />
