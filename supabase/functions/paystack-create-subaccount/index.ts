@@ -8,6 +8,21 @@ const PAYSTACK_SECRET_KEY = Deno.env.get('PAYSTACK_SECRET_KEY')
 // the platform's main account" on every split payment through this subaccount.
 const PLATFORM_FEE_PERCENT = 10
 
+// Called from the browser (cross-origin from the app's own domain to *.supabase.co), so every
+// response needs these, and the browser's preflight OPTIONS request needs to be answered before
+// it ever reaches Paystack -- without this, supabase.functions.invoke() fails with a generic
+// "Failed to send a request to the Edge Function" (the browser blocks the response before the
+// JS client ever sees a real HTTP status).
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
+
+function jsonResponse(body: unknown, status: number) {
+  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } })
+}
+
 interface CreateSubaccountBody {
   business_name?: string
   settlement_bank?: string
@@ -15,23 +30,21 @@ interface CreateSubaccountBody {
 }
 
 Deno.serve(async (req: Request) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS_HEADERS })
+  }
+
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 })
+    return new Response('Method not allowed', { status: 405, headers: CORS_HEADERS })
   }
 
   if (!PAYSTACK_SECRET_KEY) {
-    return new Response(JSON.stringify({ error: 'Paystack is not configured' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'Paystack is not configured' }, 500)
   }
 
   const authHeader = req.headers.get('Authorization')
   if (!authHeader) {
-    return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'Missing Authorization header' }, 401)
   }
 
   const supabase = createClient(
@@ -42,28 +55,19 @@ Deno.serve(async (req: Request) => {
 
   const { data: userData, error: userError } = await supabase.auth.getUser()
   if (userError || !userData.user) {
-    return new Response(JSON.stringify({ error: 'Not authenticated' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'Not authenticated' }, 401)
   }
 
   let body: CreateSubaccountBody
   try {
     body = await req.json()
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: 'Invalid JSON body' }, 400)
   }
 
   const { business_name, settlement_bank, account_number } = body
   if (!business_name || !settlement_bank || !account_number) {
-    return new Response(
-      JSON.stringify({ error: 'business_name, settlement_bank, and account_number are required' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } },
-    )
+    return jsonResponse({ error: 'business_name, settlement_bank, and account_number are required' }, 400)
   }
 
   const paystackResponse = await fetch('https://api.paystack.co/subaccount', {
@@ -83,10 +87,7 @@ Deno.serve(async (req: Request) => {
   const paystackData = await paystackResponse.json()
 
   if (!paystackResponse.ok || !paystackData.status) {
-    return new Response(
-      JSON.stringify({ error: paystackData.message ?? 'Paystack rejected the subaccount' }),
-      { status: 422, headers: { 'Content-Type': 'application/json' } },
-    )
+    return jsonResponse({ error: paystackData.message ?? 'Paystack rejected the subaccount' }, 422)
   }
 
   const subaccountCode = paystackData.data.subaccount_code as string
@@ -106,14 +107,8 @@ Deno.serve(async (req: Request) => {
     .eq('id', userData.user.id)
 
   if (updateError) {
-    return new Response(JSON.stringify({ error: updateError.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return jsonResponse({ error: updateError.message }, 500)
   }
 
-  return new Response(JSON.stringify({ subaccount_code: subaccountCode }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  })
+  return jsonResponse({ subaccount_code: subaccountCode }, 200)
 })
