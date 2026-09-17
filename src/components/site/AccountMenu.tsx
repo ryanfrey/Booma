@@ -1,4 +1,4 @@
-import { ChevronDown, CreditCard, Gavel, LayoutList, Plus, LogOut, Trophy, User } from 'lucide-react'
+import { ChevronDown, CreditCard, Gavel, LayoutList, ListOrdered, Plus, LogOut, Trophy, User } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
@@ -55,6 +55,14 @@ export function AccountMenu() {
             Signed in as <span className="font-semibold text-ink">{profile?.display_name}</span>
           </p>
           <div className="border-t border-line" />
+          <Link
+            to="/bids"
+            role="menuitem"
+            className="flex items-center gap-2 px-3 py-2 text-small text-ink hover:bg-surface-2"
+            onClick={() => setOpen(false)}
+          >
+            <ListOrdered size={16} strokeWidth={1.5} /> My bids
+          </Link>
           <Link
             to="/wins"
             role="menuitem"

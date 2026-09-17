@@ -16,6 +16,7 @@ import { AdminAuctionsPage } from './pages/admin/AdminAuctionsPage'
 import { AdminAuctionDetailPage } from './pages/admin/AdminAuctionDetailPage'
 import { PaymentMethodPage } from './pages/PaymentMethodPage'
 import { WinsPage } from './pages/WinsPage'
+import { MyBidsPage } from './pages/MyBidsPage'
 
 function App() {
   return (
@@ -65,6 +66,14 @@ function App() {
           element={
             <ProtectedRoute>
               <WinsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/bids"
+          element={
+            <ProtectedRoute>
+              <MyBidsPage />
             </ProtectedRoute>
           }
         />
