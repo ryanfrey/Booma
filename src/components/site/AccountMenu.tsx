@@ -1,4 +1,4 @@
-import { ChevronDown, Gavel, LayoutList, LogOut, Plus, User } from 'lucide-react'
+import { ChevronDown, CreditCard, Gavel, LayoutList, Plus, LogOut, Trophy, User } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
@@ -54,6 +54,24 @@ export function AccountMenu() {
           <p className="truncate px-3 py-2 text-small text-ink-2">
             Signed in as <span className="font-semibold text-ink">{profile?.display_name}</span>
           </p>
+          <div className="border-t border-line" />
+          <Link
+            to="/wins"
+            role="menuitem"
+            className="flex items-center gap-2 px-3 py-2 text-small text-ink hover:bg-surface-2"
+            onClick={() => setOpen(false)}
+          >
+            <Trophy size={16} strokeWidth={1.5} /> My wins
+          </Link>
+          <Link
+            to="/account/payment-method"
+            role="menuitem"
+            className="flex items-center gap-2 px-3 py-2 text-small text-ink hover:bg-surface-2"
+            onClick={() => setOpen(false)}
+          >
+            <CreditCard size={16} strokeWidth={1.5} />
+            {profile?.payment_method_verified_at ? 'Payment method' : 'Verify payment method'}
+          </Link>
           <div className="border-t border-line" />
           {profile?.is_seller ? (
             <>
