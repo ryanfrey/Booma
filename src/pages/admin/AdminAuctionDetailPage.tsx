@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { PackageSearch, Play, Radio } from 'lucide-react'
+import { PackageSearch, Pencil, Play, Radio } from 'lucide-react'
 import { Button } from '../../components/ui/Button'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { formatZARWhole } from '../../lib/currency'
@@ -10,6 +10,7 @@ import {
   getAuctionAdmin,
   listLotsAdmin,
   setAuctionStatus,
+  updateLot,
   type AuctionRow,
   type LotRow,
 } from '../../lib/auctions'
@@ -48,6 +49,7 @@ export function AdminAuctionDetailPage() {
   const [auction, setAuction] = useState<AuctionRow | null | undefined>(undefined)
   const [lots, setLots] = useState<LotRow[]>([])
   const [form, setForm] = useState(EMPTY_FORM)
+  const [editingLotId, setEditingLotId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [statusUpdating, setStatusUpdating] = useState(false)
@@ -71,8 +73,7 @@ export function AdminAuctionDetailPage() {
     setSubmitting(true)
     setError(null)
     try {
-      await createLot({
-        auctionId: id,
+      const lotFields = {
         title: form.title,
         category: form.category,
         condition: form.condition,
@@ -85,14 +86,45 @@ export function AdminAuctionDetailPage() {
         dimensions: form.dimensions,
         conditionNotes: form.conditionNotes,
         collectionDetails: form.collectionDetails,
-      })
+      }
+      if (editingLotId) {
+        await updateLot({ id: editingLotId, ...lotFields })
+      } else {
+        await createLot({ auctionId: id, ...lotFields })
+      }
       setForm(EMPTY_FORM)
+      setEditingLotId(null)
       await load(id)
     } catch {
-      setError('Could not add the lot. Please check the fields and try again.')
+      setError(editingLotId ? 'Could not save the lot. Please check the fields and try again.' : 'Could not add the lot. Please check the fields and try again.')
     } finally {
       setSubmitting(false)
     }
+  }
+
+  const startEditingLot = (lot: LotRow) => {
+    setEditingLotId(lot.id)
+    setError(null)
+    setForm({
+      title: lot.title,
+      category: lot.category,
+      condition: lot.condition,
+      location: lot.location,
+      estimateLow: String(lot.estimate_low ?? ''),
+      estimateHigh: String(lot.estimate_high ?? ''),
+      startingPrice: String(lot.starting_price ?? ''),
+      reservePrice: lot.reserve_price != null ? String(lot.reserve_price) : '',
+      description: lot.description ?? '',
+      dimensions: lot.dimensions ?? '',
+      conditionNotes: lot.condition_notes ?? '',
+      collectionDetails: lot.collection_details ?? '',
+    })
+  }
+
+  const cancelEditingLot = () => {
+    setEditingLotId(null)
+    setForm(EMPTY_FORM)
+    setError(null)
   }
 
   const goLive = async () => {
@@ -140,7 +172,7 @@ export function AdminAuctionDetailPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="mt-8 grid gap-4 rounded-tile border border-line p-6 sm:grid-cols-2">
-            <h2 className="text-h3 tracking-tight text-ink sm:col-span-2">Add a lot</h2>
+            <h2 className="text-h3 tracking-tight text-ink sm:col-span-2">{editingLotId ? 'Edit lot' : 'Add a lot'}</h2>
             <label className="text-small font-semibold text-ink">
               Title
               <input
@@ -264,10 +296,15 @@ export function AdminAuctionDetailPage() {
               />
             </label>
             {error && <p className="text-small text-danger sm:col-span-2">{error}</p>}
-            <div className="sm:col-span-2">
+            <div className="flex gap-2 sm:col-span-2">
               <Button type="submit" variant="primary" size="md" disabled={submitting}>
-                {submitting ? 'Adding…' : 'Add lot'}
+                {submitting ? 'Saving…' : editingLotId ? 'Save changes' : 'Add lot'}
               </Button>
+              {editingLotId && (
+                <Button type="button" variant="outline" size="md" onClick={cancelEditingLot} disabled={submitting}>
+                  Cancel
+                </Button>
+              )}
             </div>
           </form>
 
@@ -285,9 +322,15 @@ export function AdminAuctionDetailPage() {
                         {lot.condition} · {lot.location}
                       </p>
                     </div>
-                    <p className="text-small text-ink-2">
-                      Est. {formatZARWhole(lot.estimate_low)} – {formatZARWhole(lot.estimate_high)}
-                    </p>
+                    <div className="flex items-center gap-4">
+                      <p className="text-small text-ink-2">
+                        Est. {formatZARWhole(lot.estimate_low)} – {formatZARWhole(lot.estimate_high)}
+                      </p>
+                      <Button variant="outline" size="md" onClick={() => startEditingLot(lot)}>
+                        <Pencil size={16} strokeWidth={1.5} />
+                        Edit
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>

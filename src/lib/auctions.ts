@@ -200,6 +200,46 @@ export async function createLot(input: CreateLotInput): Promise<LotRow> {
   return data
 }
 
+export interface UpdateLotInput {
+  id: string
+  title: string
+  description: string
+  dimensions: string
+  conditionNotes: string
+  collectionDetails: string
+  category: string
+  condition: string
+  location: string
+  estimateLow: number
+  estimateHigh: number
+  startingPrice: number
+  reservePrice?: number
+}
+
+export async function updateLot(input: UpdateLotInput): Promise<LotRow> {
+  const { data, error } = await supabase
+    .from('lots')
+    .update({
+      title: input.title,
+      description: input.description,
+      dimensions: input.dimensions,
+      condition_notes: input.conditionNotes,
+      collection_details: input.collectionDetails,
+      category: input.category,
+      condition: input.condition,
+      location: input.location,
+      estimate_low: input.estimateLow,
+      estimate_high: input.estimateHigh,
+      starting_price: input.startingPrice,
+      reserve_price: input.reservePrice ?? null,
+    })
+    .eq('id', input.id)
+    .select('*')
+    .single()
+  if (error) throw error
+  return data
+}
+
 export async function setAuctionStatus(auctionId: string, status: AuctionStatus): Promise<void> {
   const { error } = await supabase.from('auctions').update({ status }).eq('id', auctionId)
   if (error) throw error
