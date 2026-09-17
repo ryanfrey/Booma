@@ -6,6 +6,7 @@ import { BidSheet } from '../components/site/BidSheet'
 import { Gallery } from '../components/ui/Gallery'
 import { LotCard } from '../components/ui/LotCard'
 import { LotGrid } from '../components/ui/LotGrid'
+import { Skeleton } from '../components/ui/Skeleton'
 import { useWatchlist } from '../hooks/useWatchlist'
 import { useLotBidding } from '../hooks/useLotBidding'
 import { formatZARWhole } from '../lib/currency'
@@ -30,6 +31,21 @@ const PLACEHOLDER_LOT: MockLot = {
   dimensions: '',
   conditionNotes: '',
   collectionDetails: '',
+}
+
+function LotDetailSkeleton() {
+  return (
+    <div className="mx-auto max-w-[1280px] px-4 py-8 pb-28 sm:px-6 lg:pb-8">
+      <div className="mt-4 grid gap-10 lg:grid-cols-[1fr_360px]">
+        <div>
+          <Skeleton className="h-8 w-2/3" />
+          <Skeleton className="mt-2 h-4 w-1/3" />
+          <Skeleton className="mt-5 aspect-[4/3] w-full" />
+        </div>
+        <Skeleton className="h-56 w-full" />
+      </div>
+    </div>
+  )
 }
 
 export function LotDetailPage() {
@@ -61,7 +77,7 @@ export function LotDetailPage() {
   const { currentBid, bidCount, history, placeBid } = useLotBidding(lot?.id, activeLot.currentBid)
 
   if (lot === null) return <Navigate to="/listings" replace />
-  if (lot === undefined) return null
+  if (lot === undefined) return <LotDetailSkeleton />
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-8 pb-28 sm:px-6 lg:pb-8">

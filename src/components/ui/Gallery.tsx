@@ -15,7 +15,7 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
   return (
     <div>
       <div className="relative aspect-[4/3] overflow-hidden rounded-tile bg-surface-2">
-        <img src={images[active]} alt={title} className="h-full w-full object-cover" />
+        <img key={images[active]} src={images[active]} alt={title} className="h-full w-full object-cover" />
         <button
           type="button"
           onClick={() => setFullscreen(true)}
