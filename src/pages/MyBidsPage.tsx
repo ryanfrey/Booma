@@ -147,46 +147,53 @@ export function MyBidsPage() {
         <ul className="mt-6 flex flex-col gap-2">
           {rows.map((row) => (
             <li key={row.lotId} className="rounded-card border border-line p-4">
-              <div className="flex items-center gap-4">
-                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-card bg-surface-2">
-                  {row.thumbnail && <img src={row.thumbnail} alt="" className="h-full w-full object-cover" />}
-                </div>
-                <div className="flex-1">
-                  <Link to={`/listings/${row.lotId}`} className="font-semibold text-ink hover:text-brand-ink">
-                    {row.title}
-                  </Link>
-                  <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-small text-ink-2">
-                    <span>Your bid {formatZARWhole(row.yourBid)}</span>
-                    {!row.isWinning && <span>Current bid {formatZARWhole(row.currentBid)}</span>}
-                    <StatusChip status={status(row)} />
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="flex min-w-0 flex-1 gap-4">
+                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-card bg-surface-2">
+                    {row.thumbnail && <img src={row.thumbnail} alt="" className="h-full w-full object-cover" />}
                   </div>
-                  {row.isSold && (
-                    <p className="mt-1 text-small text-ink-2">
-                      {row.soldToYou ? 'You won this lot.' : 'Sold to another bidder.'}
-                    </p>
-                  )}
-                  {!row.isSold && !row.prebiddingOpen && (
-                    <p className="mt-1 text-small text-ink-2">
-                      {row.auctionStatus === 'live' ? (
-                        <Link to={`/auctions/${row.auctionId}/live`} className="font-semibold text-brand-ink">
-                          This auction is live — bid in the room
-                        </Link>
-                      ) : (
-                        'Pre-bidding has closed for this auction.'
-                      )}
-                    </p>
-                  )}
+                  <div className="min-w-0 flex-1">
+                    <Link to={`/listings/${row.lotId}`} className="font-semibold text-ink hover:text-brand-ink">
+                      {row.title}
+                    </Link>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-small text-ink-2">
+                      <span>Your bid {formatZARWhole(row.yourBid)}</span>
+                      {!row.isWinning && <span>Current bid {formatZARWhole(row.currentBid)}</span>}
+                      <StatusChip status={status(row)} />
+                    </div>
+                    {row.isSold && (
+                      <p className="mt-1 text-small text-ink-2">
+                        {row.soldToYou ? 'You won this lot.' : 'Sold to another bidder.'}
+                      </p>
+                    )}
+                    {!row.isSold && !row.prebiddingOpen && (
+                      <p className="mt-1 text-small text-ink-2">
+                        {row.auctionStatus === 'live' ? (
+                          <Link to={`/auctions/${row.auctionId}/live`} className="font-semibold text-brand-ink">
+                            This auction is live — bid in the room
+                          </Link>
+                        ) : (
+                          'Pre-bidding has closed for this auction.'
+                        )}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div className="flex shrink-0 flex-col items-end gap-2">
+                <div className="flex items-center justify-between gap-3 sm:shrink-0 sm:flex-col sm:items-end sm:justify-start">
                   {!row.isWinning && !row.isSold && row.prebiddingOpen && (
-                    <Button variant="primary" size="md" onClick={() => setBiddingLot(row)}>
+                    <Button
+                      variant="primary"
+                      size="md"
+                      className="w-full sm:w-auto"
+                      onClick={() => setBiddingLot(row)}
+                    >
                       Bid higher
                     </Button>
                   )}
                   <button
                     type="button"
                     onClick={() => toggleHistory(row.lotId)}
-                    className="flex items-center gap-1 text-small text-ink-2 hover:text-ink"
+                    className="flex shrink-0 items-center gap-1 text-small text-ink-2 hover:text-ink"
                   >
                     History
                     {expandedLotId === row.lotId ? (
