@@ -44,6 +44,20 @@ export function useLiveAuction(
   const [feed, setFeed] = useState<LiveBidEvent[]>([])
   const [paused, setPaused] = useState(false)
 
+  // initialCurrentLotId/initialStatus are only known once the parent page's own async auction
+  // fetch resolves, so the very first render (before that) always passes currentLotId=null and
+  // status='preview' -- and since a postgres_changes subscription only streams future row
+  // changes, it never backfills whatever the row's value already was at subscribe time. Without
+  // this sync, every fresh page load would show nothing until the next lot happened to change
+  // while that tab was open.
+  useEffect(() => {
+    setCurrentLotId(initialCurrentLotId)
+  }, [initialCurrentLotId])
+
+  useEffect(() => {
+    setStatus(initialStatus)
+  }, [initialStatus])
+
   useEffect(() => {
     if (!enabled || !auctionId) return
 
