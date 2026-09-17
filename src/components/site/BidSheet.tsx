@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { type FormEvent, type ReactNode, useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { formatZARWhole } from '../../lib/currency'
-import { getBidBreakdown } from '../../lib/buyersPremium'
 import { getNextMinBid } from '../../lib/increments'
 import { Button } from '../ui/Button'
 import { MaxBidInput } from './MaxBidInput'
@@ -147,7 +146,6 @@ export function BidSheet({
   }
 
   const chosenAmount = mode === 'single' ? amount : Number(maxAmount)
-  const breakdown = getBidBreakdown(Number.isFinite(chosenAmount) ? chosenAmount : minBid)
 
   const handleContinue = () => {
     if (mode === 'max' && (!maxAmount || Number(maxAmount) < minBid)) {
@@ -215,25 +213,10 @@ export function BidSheet({
             {mode === 'max' ? 'Confirm your max bid' : 'Confirm your bid'}
           </h2>
 
-          <div className="mt-5 flex flex-col gap-2 rounded-card bg-surface-2 p-4 text-small">
-            <div className="flex justify-between">
-              <span className="text-ink-2">{mode === 'max' ? 'Max bid' : 'Bid amount'}</span>
-              <span className="font-semibold tabular-nums text-ink">{formatZARWhole(breakdown.bidAmount)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-ink-2">Buyer's premium (10%)</span>
-              <span className="tabular-nums text-ink">{formatZARWhole(breakdown.premium)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-ink-2">VAT on premium (15%)</span>
-              <span className="tabular-nums text-ink">{formatZARWhole(breakdown.vat)}</span>
-            </div>
-            <div className="mt-1 flex justify-between border-t border-line pt-2 font-semibold">
-              <span className="text-ink">You'll pay approx.</span>
-              <span className="tabular-nums text-ink">{formatZARWhole(breakdown.total)}</span>
-            </div>
+          <div className="mt-5 flex justify-between rounded-card bg-surface-2 p-4 text-small">
+            <span className="text-ink-2">{mode === 'max' ? 'Max bid' : 'Bid amount'}</span>
+            <span className="font-semibold tabular-nums text-ink">{formatZARWhole(chosenAmount)}</span>
           </div>
-          <p className="mt-2 text-micro text-ink-2">Estimated only — final fees are confirmed at checkout.</p>
 
           {error && <p className="mt-3 text-small text-danger">{error}</p>}
 

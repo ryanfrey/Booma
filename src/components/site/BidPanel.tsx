@@ -4,7 +4,6 @@ import { PriceTicker } from '../ui/PriceTicker'
 import { WatchButton } from '../ui/WatchButton'
 import { Button } from '../ui/Button'
 import { formatZARWhole } from '../../lib/currency'
-import { getBidBreakdown } from '../../lib/buyersPremium'
 import { getNextMinBid } from '../../lib/increments'
 import type { MockLot } from '../../lib/mockData'
 
@@ -32,7 +31,6 @@ function handleShare(title: string) {
 export function BidPanel({ lot, currentBid, bidCount, watched, onToggleWatch, onOpenBidSheet }: BidPanelProps) {
   const isSold = lot.status === 'sold'
   const minBid = getNextMinBid(currentBid)
-  const breakdown = getBidBreakdown(currentBid)
 
   return (
     <>
@@ -61,11 +59,6 @@ export function BidPanel({ lot, currentBid, bidCount, watched, onToggleWatch, on
             <Button variant="primary" size="lg" className="mt-3 w-full" onClick={onOpenBidSheet}>
               Place bid
             </Button>
-            <p className="mt-3 text-micro text-ink-2">
-              If you win at the current bid, you'll pay approx.{' '}
-              <span className="font-semibold text-ink">{formatZARWhole(breakdown.total)}</span> incl. premium &amp;
-              VAT.
-            </p>
           </>
         )}
 
