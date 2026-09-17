@@ -36,7 +36,10 @@ export function useLiveAuction(
   enabled: boolean,
 ) {
   const { user } = useAuth()
-  const [lots] = useState<MockLot[]>(initialLots)
+  // Not local state: the parent page's own auction/lots fetch is async, so initialLots is [] on
+  // the very first render and only becomes the real list once that resolves. A useState here
+  // would freeze on that first, empty value forever (same bug as currentLotId/status below).
+  const lots = initialLots
   const [lotRows, setLotRows] = useState<Record<string, LotRow>>({})
   const [currentLotId, setCurrentLotId] = useState<string | null>(initialCurrentLotId)
   const [status, setStatus] = useState(initialStatus)
