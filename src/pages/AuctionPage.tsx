@@ -65,6 +65,7 @@ export function AuctionPage() {
                 key={lot.id}
                 href={`/listings/${lot.id}`}
                 title={lot.title}
+                imageUrl={lot.imageUrl}
                 condition={lot.condition}
                 location={lot.location}
                 currentBid={lot.currentBid}

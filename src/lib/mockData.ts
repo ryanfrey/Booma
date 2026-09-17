@@ -22,8 +22,10 @@ export interface MockLot {
   auctionId: string
   lotNumber: number
   title: string
+  /** First photo, if any — used by card/thumbnail views. */
   imageUrl?: string
-  imageCount: number
+  /** All photos in display order — used by the lot detail page's gallery. */
+  images: string[]
   condition: string
   location: string
   currentBid: number

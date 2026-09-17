@@ -1,20 +1,32 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { PackageSearch, Pencil, Play, Radio } from 'lucide-react'
+import { PackageSearch, Pencil, Play, Radio, X } from 'lucide-react'
 import { Button } from '../../components/ui/Button'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { formatZARWhole } from '../../lib/currency'
 import { CATEGORIES, CONDITIONS } from '../../lib/mockData'
+import { getLotPhotoUrl } from '../../lib/storage'
+import { supabase } from '../../lib/supabase'
 import {
+  addLotImage,
   advanceLiveAuction,
   createLot,
+  deleteLotImage,
   getAuctionAdmin,
+  listLotImages,
+  listLotImagesByLotIds,
   listLotsAdmin,
   setAuctionStatus,
   updateLot,
   type AuctionRow,
+  type LotImageRow,
   type LotRow,
 } from '../../lib/auctions'
+
+interface PhotoDraft {
+  file: File
+  previewUrl: string
+}
 
 const EMPTY_FORM: {
   title: string
@@ -51,6 +63,9 @@ export function AdminAuctionDetailPage() {
   const [lots, setLots] = useState<LotRow[]>([])
   const [form, setForm] = useState(EMPTY_FORM)
   const [editingLotId, setEditingLotId] = useState<string | null>(null)
+  const [photos, setPhotos] = useState<PhotoDraft[]>([])
+  const [existingImages, setExistingImages] = useState<LotImageRow[]>([])
+  const [lotThumbnails, setLotThumbnails] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [statusUpdating, setStatusUpdating] = useState(false)
@@ -59,11 +74,27 @@ export function AdminAuctionDetailPage() {
     const [auctionRow, lotRows] = await Promise.all([getAuctionAdmin(auctionId), listLotsAdmin(auctionId)])
     setAuction(auctionRow)
     setLots(lotRows)
+    const imagesByLot = await listLotImagesByLotIds(lotRows.map((lot) => lot.id))
+    setLotThumbnails(
+      Object.fromEntries(
+        Object.entries(imagesByLot)
+          .filter(([, images]) => images.length > 0)
+          .map(([lotId, images]) => [lotId, getLotPhotoUrl(images[0].storage_path)]),
+      ),
+    )
   }
 
   useEffect(() => {
     if (id) load(id)
   }, [id])
+
+  // Only local object-URL previews need cleanup; already-uploaded images are plain public URLs.
+  useEffect(() => {
+    return () => {
+      photos.forEach((p) => URL.revokeObjectURL(p.previewUrl))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (!id) return <Navigate to="/admin" replace />
   if (auction === null) return <Navigate to="/admin" replace />
@@ -88,11 +119,30 @@ export function AdminAuctionDetailPage() {
         conditionNotes: form.conditionNotes,
         collectionDetails: form.collectionDetails,
       }
+      let lotId: string
       if (editingLotId) {
         await updateLot({ id: editingLotId, ...lotFields })
+        lotId = editingLotId
       } else {
-        await createLot({ auctionId: id, ...lotFields })
+        lotId = (await createLot({ auctionId: id, ...lotFields })).id
       }
+
+      // New photos are appended after whatever's already on the lot.
+      let nextPosition = existingImages.length
+      for (const photo of photos) {
+        const extension = photo.file.name.split('.').pop() || 'jpg'
+        const path = `lots/${lotId}/${crypto.randomUUID()}.${extension}`
+        const { error: uploadError } = await supabase.storage
+          .from('lot-photos')
+          .upload(path, photo.file, { contentType: photo.file.type })
+        if (uploadError) throw uploadError
+        await addLotImage(lotId, path, nextPosition)
+        nextPosition += 1
+      }
+
+      photos.forEach((p) => URL.revokeObjectURL(p.previewUrl))
+      setPhotos([])
+      setExistingImages([])
       setForm(EMPTY_FORM)
       setEditingLotId(null)
       await load(id)
@@ -103,9 +153,30 @@ export function AdminAuctionDetailPage() {
     }
   }
 
-  const startEditingLot = (lot: LotRow) => {
+  const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files ?? [])
+    setPhotos((prev) => [...prev, ...files.map((file) => ({ file, previewUrl: URL.createObjectURL(file) }))])
+    event.target.value = ''
+  }
+
+  const removeNewPhoto = (index: number) => {
+    setPhotos((prev) => {
+      URL.revokeObjectURL(prev[index].previewUrl)
+      return prev.filter((_, i) => i !== index)
+    })
+  }
+
+  const removeExistingImage = async (image: LotImageRow) => {
+    setExistingImages((prev) => prev.filter((i) => i.id !== image.id))
+    await deleteLotImage(image)
+    if (id) await load(id)
+  }
+
+  const startEditingLot = async (lot: LotRow) => {
     setEditingLotId(lot.id)
     setError(null)
+    photos.forEach((p) => URL.revokeObjectURL(p.previewUrl))
+    setPhotos([])
     setForm({
       title: lot.title,
       category: lot.category,
@@ -120,10 +191,14 @@ export function AdminAuctionDetailPage() {
       conditionNotes: lot.condition_notes ?? '',
       collectionDetails: lot.collection_details ?? '',
     })
+    setExistingImages(await listLotImages(lot.id))
   }
 
   const cancelEditingLot = () => {
     setEditingLotId(null)
+    photos.forEach((p) => URL.revokeObjectURL(p.previewUrl))
+    setPhotos([])
+    setExistingImages([])
     setForm(EMPTY_FORM)
     setError(null)
   }
@@ -298,6 +373,46 @@ export function AdminAuctionDetailPage() {
                 className="mt-1 w-full rounded-card border border-line px-3 py-2 text-body text-ink"
               />
             </label>
+            <label className="text-small font-semibold text-ink sm:col-span-2">
+              Photos
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                onChange={handlePhotoChange}
+                className="mt-1 block w-full text-body text-ink"
+              />
+            </label>
+            {(existingImages.length > 0 || photos.length > 0) && (
+              <div className="flex flex-wrap gap-2 sm:col-span-2">
+                {existingImages.map((image) => (
+                  <div key={image.id} className="relative h-20 w-20 overflow-hidden rounded-card bg-surface-2">
+                    <img src={getLotPhotoUrl(image.storage_path)} alt="" className="h-full w-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeExistingImage(image)}
+                      aria-label="Remove photo"
+                      className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-pill bg-ink/70 text-surface"
+                    >
+                      <X size={14} strokeWidth={2} />
+                    </button>
+                  </div>
+                ))}
+                {photos.map((photo, index) => (
+                  <div key={photo.previewUrl} className="relative h-20 w-20 overflow-hidden rounded-card bg-surface-2">
+                    <img src={photo.previewUrl} alt="" className="h-full w-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeNewPhoto(index)}
+                      aria-label="Remove photo"
+                      className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-pill bg-ink/70 text-surface"
+                    >
+                      <X size={14} strokeWidth={2} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
             {error && <p className="text-small text-danger sm:col-span-2">{error}</p>}
             <div className="flex gap-2 sm:col-span-2">
               <Button type="submit" variant="primary" size="md" disabled={submitting}>
@@ -318,12 +433,19 @@ export function AdminAuctionDetailPage() {
               <div className="flex flex-col gap-2">
                 {lots.map((lot) => (
                   <div key={lot.id} className="flex items-center justify-between gap-4 rounded-card border border-line p-4">
-                    <div>
-                      <p className="text-small text-ink-2">Lot {lot.lot_number}</p>
-                      <p className="font-semibold text-ink">{lot.title}</p>
-                      <p className="text-small text-ink-2">
-                        {lot.condition} · {lot.location}
-                      </p>
+                    <div className="flex items-center gap-4">
+                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-card bg-surface-2">
+                        {lotThumbnails[lot.id] && (
+                          <img src={lotThumbnails[lot.id]} alt="" className="h-full w-full object-cover" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-small text-ink-2">Lot {lot.lot_number}</p>
+                        <p className="font-semibold text-ink">{lot.title}</p>
+                        <p className="text-small text-ink-2">
+                          {lot.condition} · {lot.location}
+                        </p>
+                      </div>
                     </div>
                     <div className="flex items-center gap-4">
                       <p className="text-small text-ink-2">

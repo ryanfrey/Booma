@@ -144,7 +144,11 @@ export function LiveAuctionPage() {
             <p className="text-small text-ink-2">
               Lot {currentLot.lotNumber} of {auction.lotCount}
             </p>
-            <div className="mt-3 aspect-[4/3] rounded-tile bg-surface-2" />
+            <div className="mt-3 aspect-[4/3] overflow-hidden rounded-tile bg-surface-2">
+              {currentLot.imageUrl && (
+                <img src={currentLot.imageUrl} alt={currentLot.title} className="h-full w-full object-cover" />
+              )}
+            </div>
 
             <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
               <div>

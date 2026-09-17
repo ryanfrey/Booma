@@ -52,7 +52,7 @@ export function LotCard({
     <article className={`group relative ${isSold ? 'opacity-60' : ''}`}>
       <Link to={href} className="block">
         <div className="relative aspect-[4/3] overflow-hidden rounded-card bg-surface-2">
-          {imageUrl && <img src={imageUrl} alt="" className="h-full w-full object-cover" />}
+          {imageUrl && <img src={imageUrl} alt="" loading="lazy" className="h-full w-full object-cover" />}
 
           {onToggleWatch && (
             <button

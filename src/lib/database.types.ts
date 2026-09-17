@@ -296,6 +296,38 @@ export type Database = {
           },
         ]
       }
+      lot_images: {
+        Row: {
+          created_at: string
+          id: string
+          lot_id: string
+          position: number
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lot_id: string
+          position?: number
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lot_id?: string
+          position?: number
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lot_images_lot_id_fkey"
+            columns: ["lot_id"]
+            isOneToOne: false
+            referencedRelation: "lots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lot_payments: {
         Row: {
           amount: number

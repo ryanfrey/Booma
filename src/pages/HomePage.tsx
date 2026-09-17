@@ -119,6 +119,7 @@ export function HomePage() {
                 key={lot.id}
                 href={`/listings/${lot.id}`}
                 title={lot.title}
+                imageUrl={lot.imageUrl}
                 condition={lot.condition}
                 location={lot.location}
                 currentBid={lot.currentBid}
@@ -143,6 +144,7 @@ export function HomePage() {
               key={lot.id}
               href={`/listings/${lot.id}`}
               title={lot.title}
+              imageUrl={lot.imageUrl}
               condition={lot.condition}
               location={lot.location}
               currentBid={lot.currentBid}

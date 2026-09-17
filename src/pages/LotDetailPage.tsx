@@ -17,7 +17,7 @@ const PLACEHOLDER_LOT: MockLot = {
   auctionId: 'placeholder',
   lotNumber: 0,
   title: '',
-  imageCount: 0,
+  images: [],
   condition: '',
   location: '',
   currentBid: 0,
@@ -85,7 +85,7 @@ export function LotDetailPage() {
           </p>
 
           <div className="mt-5">
-            <Gallery imageCount={lot.imageCount} title={lot.title} />
+            <Gallery images={lot.images} title={lot.title} />
           </div>
 
           <div className="mt-8">
@@ -122,6 +122,7 @@ export function LotDetailPage() {
                       key={other.id}
                       href={`/listings/${other.id}`}
                       title={other.title}
+                      imageUrl={other.imageUrl}
                       condition={other.condition}
                       location={other.location}
                       currentBid={other.currentBid}

@@ -1,43 +1,50 @@
 import { ChevronLeft, ChevronRight, Expand, X } from 'lucide-react'
 import { useState } from 'react'
 
-// Placeholder tiles stand in for real photos until Storage-backed images
-// land with the Supabase wiring milestone — count is all we have per lot.
-export function Gallery({ imageCount, title }: { imageCount: number; title: string }) {
+export function Gallery({ images, title }: { images: string[]; title: string }) {
   const [active, setActive] = useState(0)
   const [fullscreen, setFullscreen] = useState(false)
-  const count = Math.max(1, imageCount)
+  const count = images.length
 
   const go = (delta: number) => setActive((i) => (i + delta + count) % count)
+
+  if (count === 0) {
+    return <div className="aspect-[4/3] rounded-tile bg-surface-2" />
+  }
 
   return (
     <div>
       <div className="relative aspect-[4/3] overflow-hidden rounded-tile bg-surface-2">
+        <img src={images[active]} alt={title} className="h-full w-full object-cover" />
         <button
           type="button"
           onClick={() => setFullscreen(true)}
           aria-label={`View ${title} full screen`}
           className="absolute inset-0"
         />
-        <span className="absolute bottom-3 right-3 flex items-center gap-1 rounded-pill bg-ink/60 px-2.5 py-1 text-micro font-semibold text-surface">
-          <Expand size={13} strokeWidth={1.75} />
-          {active + 1} / {count}
-        </span>
+        {count > 1 && (
+          <span className="absolute bottom-3 right-3 flex items-center gap-1 rounded-pill bg-ink/60 px-2.5 py-1 text-micro font-semibold text-surface">
+            <Expand size={13} strokeWidth={1.75} />
+            {active + 1} / {count}
+          </span>
+        )}
       </div>
 
       {count > 1 && (
         <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
-          {Array.from({ length: count }).map((_, i) => (
+          {images.map((src, i) => (
             <button
-              key={i}
+              key={src}
               type="button"
               onClick={() => setActive(i)}
               aria-label={`Photo ${i + 1}`}
               aria-current={i === active}
-              className={`h-16 w-16 shrink-0 rounded-card bg-surface-2 transition-[outline] ${
+              className={`h-16 w-16 shrink-0 overflow-hidden rounded-card bg-surface-2 transition-[outline] ${
                 i === active ? 'outline-2 outline-offset-2 outline-brand' : ''
               }`}
-            />
+            >
+              <img src={src} alt="" loading="lazy" className="h-full w-full object-cover" />
+            </button>
           ))}
         </div>
       )}
@@ -74,10 +81,12 @@ export function Gallery({ imageCount, title }: { imageCount: number; title: stri
             </>
           )}
 
-          <div className="mx-6 aspect-[4/3] w-full max-w-[720px] rounded-card bg-surface-2/20" />
-          <span className="absolute bottom-6 text-small font-semibold text-surface">
-            {active + 1} / {count}
-          </span>
+          <img src={images[active]} alt={title} className="mx-6 max-h-[85vh] w-full max-w-[720px] rounded-card object-contain" />
+          {count > 1 && (
+            <span className="absolute bottom-6 text-small font-semibold text-surface">
+              {active + 1} / {count}
+            </span>
+          )}
         </div>
       )}
     </div>
