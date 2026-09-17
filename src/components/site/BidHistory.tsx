@@ -1,7 +1,7 @@
-import type { MockBid } from '../../hooks/useMockLiveLot'
+import type { LotBid } from '../../hooks/useLotBidding'
 import { formatZARWhole } from '../../lib/currency'
 
-export function BidHistory({ bids }: { bids: MockBid[] }) {
+export function BidHistory({ bids }: { bids: LotBid[] }) {
   return (
     <div className="rounded-card border border-line p-5">
       <div className="flex items-baseline justify-between">

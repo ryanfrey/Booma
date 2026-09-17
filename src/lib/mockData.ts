@@ -13,6 +13,8 @@ export interface MockAuction {
   /** When the live event starts (or started, for 'live'/'ended' auctions). */
   liveAt: string
   lotCount: number
+  /** Which lot the live room is currently calling — null when not live. */
+  currentLotId: string | null
 }
 
 export interface MockLot {
@@ -33,6 +35,10 @@ export interface MockLot {
   viewerCount?: number
   /** undefined = no reserve on this lot. */
   reserveMet?: boolean
+  /** The reserve amount itself, if one is set — undefined = no reserve. */
+  reservePrice?: number
+  /** Set only while this lot is the one currently being called live; extends on each live bid. */
+  liveClosesAt?: string | null
   estimateLow: number
   estimateHigh: number
   description: string

@@ -7,7 +7,7 @@ import { Gallery } from '../components/ui/Gallery'
 import { LotCard } from '../components/ui/LotCard'
 import { LotGrid } from '../components/ui/LotGrid'
 import { useWatchlist } from '../hooks/useWatchlist'
-import { useMockLiveLot } from '../hooks/useMockLiveLot'
+import { useLotBidding } from '../hooks/useLotBidding'
 import { formatZARWhole } from '../lib/currency'
 import { getLotWithAuction } from '../lib/auctions'
 import type { MockAuction, MockLot } from '../lib/mockData'
@@ -57,7 +57,8 @@ export function LotDetailPage() {
   // Hooks can't be called conditionally — fall back to a stable placeholder
   // lot while the real one loads, then redirect immediately if there's
   // really no match.
-  const { currentBid, bidCount, history, placeBid } = useMockLiveLot(lot ?? PLACEHOLDER_LOT)
+  const activeLot = lot ?? PLACEHOLDER_LOT
+  const { currentBid, bidCount, history, placeBid } = useLotBidding(lot?.id, activeLot.currentBid)
 
   if (lot === null) return <Navigate to="/listings" replace />
   if (lot === undefined) return null

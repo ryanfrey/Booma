@@ -1,9 +1,11 @@
 import { Gavel, List, Pause, Play, Radio } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Navigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useParams } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { PriceTicker } from '../components/ui/PriceTicker'
+import { useAuth } from '../contexts/AuthContext'
 import { useMockLiveAuction, type CallStage } from '../hooks/useMockLiveAuction'
+import { useLiveAuction } from '../hooks/useLiveAuction'
 import { formatZARWhole } from '../lib/currency'
 import { getNextMinBid } from '../lib/increments'
 import { getAuctionWithLots } from '../lib/auctions'
@@ -20,9 +22,11 @@ const CALL_LABEL: Record<CallStage, string> = {
 
 export function LiveAuctionPage() {
   const { id } = useParams<{ id: string }>()
+  const { profile } = useAuth()
   const [auction, setAuction] = useState<MockAuction | null | undefined>(undefined)
   const [lots, setLots] = useState<MockLot[]>([])
   const [view, setView] = useState<'stage' | 'list'>('stage')
+  const [bidError, setBidError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!id) return
@@ -37,22 +41,38 @@ export function LiveAuctionPage() {
     }
   }, [id])
 
-  const { currentLot, currentIndex, isDone, price, remainingMs, stage, outcomes, feed, paused, setPaused, placeBid } =
-    useMockLiveAuction(lots)
+  // "Run demo" (no status change) always gets the fake simulation, for rehearsal. "Go live"
+  // flips auction.status to 'live' before navigating here, which is what actually switches this
+  // page over to the real, server-authoritative room. Both hooks are called unconditionally
+  // (hooks can't be conditional) and only the active one's ticking/subscriptions do anything real.
+  const isRealLive = auction?.status === 'live'
+  const mock = useMockLiveAuction(lots)
+  const real = useLiveAuction(id, lots, auction?.currentLotId ?? null, auction?.status ?? 'preview', isRealLive)
+
+  const { currentLot, currentIndex, isDone, price, remainingMs, stage, outcomes, feed, paused, setPaused } = isRealLive
+    ? real
+    : mock
+  const placeBid = isRealLive
+    ? real.placeBid
+    : async (amount: number): Promise<{ error?: string }> => {
+        mock.placeBid(amount)
+        return {}
+      }
 
   if (auction === null) return <Navigate to="/listings" replace />
   if (auction === undefined) return null
 
   const seconds = Math.ceil(remainingMs / 1000)
   const isResolving = stage === 'sold' || stage === 'passed'
-  const canBid = !isResolving && !isDone && feed[0]?.bidderLabel !== 'You'
+  const paymentMethodVerified = !isRealLive || Boolean(profile?.payment_method_verified_at)
+  const canBid = !isResolving && !isDone && feed[0]?.bidderLabel !== 'You' && paymentMethodVerified
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="flex items-center gap-1.5 text-small font-semibold text-brand-ink">
-            <Radio size={14} strokeWidth={1.75} /> Live now (demo simulation)
+            <Radio size={14} strokeWidth={1.75} /> {isRealLive ? 'Live now' : 'Live now (demo simulation)'}
           </p>
           <h1 className="mt-1 text-h2 tracking-tight text-ink">{auction.title}</h1>
         </div>
@@ -160,16 +180,29 @@ export function LiveAuctionPage() {
               )}
             </div>
 
-            <Button
-              variant="primary"
-              size="lg"
-              className="mt-6 w-full sm:w-auto"
-              disabled={!canBid}
-              onClick={() => placeBid(getNextMinBid(price))}
-            >
-              <Gavel size={18} strokeWidth={1.5} />
-              Bid {formatZARWhole(getNextMinBid(price))}
-            </Button>
+            {isRealLive && !paymentMethodVerified ? (
+              <Link to="/account/payment-method">
+                <Button variant="primary" size="lg" className="mt-6 w-full sm:w-auto">
+                  Verify payment method to bid
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                variant="primary"
+                size="lg"
+                className="mt-6 w-full sm:w-auto"
+                disabled={!canBid}
+                onClick={() => {
+                  placeBid(getNextMinBid(price)).then((result) => {
+                    if (result.error) setBidError(result.error)
+                  })
+                }}
+              >
+                <Gavel size={18} strokeWidth={1.5} />
+                Bid {formatZARWhole(getNextMinBid(price))}
+              </Button>
+            )}
+            {bidError && <p className="mt-2 text-small text-danger">{bidError}</p>}
           </div>
 
           <div className="flex flex-col gap-6">

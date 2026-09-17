@@ -87,6 +87,10 @@ Deno.serve(async (req: Request) => {
       payment_method_verified_at: new Date().toISOString(),
       payment_method_card_last4: tx.authorization.last4 ?? null,
       payment_method_card_type: tx.authorization.card_type ?? null,
+      // Reusable token to charge this card again without a redirect — needed so lot winners can
+      // be charged directly (charge_authorization) at close time instead of a per-bid preauth
+      // hold, which live bidding can't tolerate.
+      paystack_authorization_code: tx.authorization.authorization_code,
     })
     .eq('id', userData.user.id)
 

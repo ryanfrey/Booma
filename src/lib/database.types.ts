@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string | null
+          current_lot_id: string | null
           id: string
           live_at: string
           location: string
@@ -28,6 +29,7 @@ export type Database = {
         Insert: {
           created_at?: string
           created_by?: string | null
+          current_lot_id?: string | null
           id?: string
           live_at: string
           location: string
@@ -38,6 +40,7 @@ export type Database = {
         Update: {
           created_at?: string
           created_by?: string | null
+          current_lot_id?: string | null
           id?: string
           live_at?: string
           location?: string
@@ -51,6 +54,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "auctions_current_lot_id_fkey"
+            columns: ["current_lot_id"]
+            isOneToOne: false
+            referencedRelation: "lots"
             referencedColumns: ["id"]
           },
         ]
@@ -241,6 +251,102 @@ export type Database = {
           },
         ]
       }
+      lot_bids: {
+        Row: {
+          amount: number
+          bidder_id: string
+          created_at: string
+          id: string
+          is_winning: boolean
+          lot_id: string
+          phase: string
+        }
+        Insert: {
+          amount: number
+          bidder_id: string
+          created_at?: string
+          id?: string
+          is_winning?: boolean
+          lot_id: string
+          phase: string
+        }
+        Update: {
+          amount?: number
+          bidder_id?: string
+          created_at?: string
+          id?: string
+          is_winning?: boolean
+          lot_id?: string
+          phase?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lot_bids_bidder_id_fkey"
+            columns: ["bidder_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lot_bids_lot_id_fkey"
+            columns: ["lot_id"]
+            isOneToOne: false
+            referencedRelation: "lots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lot_payments: {
+        Row: {
+          amount: number
+          buyer_id: string
+          buyer_premium: number
+          created_at: string
+          id: string
+          lot_id: string
+          paystack_reference: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          buyer_id: string
+          buyer_premium?: number
+          created_at?: string
+          id?: string
+          lot_id: string
+          paystack_reference?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          buyer_id?: string
+          buyer_premium?: number
+          created_at?: string
+          id?: string
+          lot_id?: string
+          paystack_reference?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lot_payments_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lot_payments_lot_id_fkey"
+            columns: ["lot_id"]
+            isOneToOne: false
+            referencedRelation: "lots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lots: {
         Row: {
           auction_id: string
@@ -249,14 +355,18 @@ export type Database = {
           condition: string
           condition_notes: string
           created_at: string
+          current_high_bidder_id: string | null
+          current_price: number
           description: string
           dimensions: string
           estimate_high: number
           estimate_low: number
           id: string
+          live_closes_at: string | null
           location: string
           lot_number: number
           reserve_met: boolean | null
+          reserve_price: number | null
           sold_at: string | null
           sold_price: number | null
           starting_price: number
@@ -270,14 +380,18 @@ export type Database = {
           condition?: string
           condition_notes?: string
           created_at?: string
+          current_high_bidder_id?: string | null
+          current_price: number
           description?: string
           dimensions?: string
           estimate_high?: number
           estimate_low?: number
           id?: string
+          live_closes_at?: string | null
           location?: string
           lot_number: number
           reserve_met?: boolean | null
+          reserve_price?: number | null
           sold_at?: string | null
           sold_price?: number | null
           starting_price?: number
@@ -291,14 +405,18 @@ export type Database = {
           condition?: string
           condition_notes?: string
           created_at?: string
+          current_high_bidder_id?: string | null
+          current_price?: number
           description?: string
           dimensions?: string
           estimate_high?: number
           estimate_low?: number
           id?: string
+          live_closes_at?: string | null
           location?: string
           lot_number?: number
           reserve_met?: boolean | null
+          reserve_price?: number | null
           sold_at?: string | null
           sold_price?: number | null
           starting_price?: number
@@ -311,6 +429,13 @@ export type Database = {
             columns: ["auction_id"]
             isOneToOne: false
             referencedRelation: "auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lots_current_high_bidder_id_fkey"
+            columns: ["current_high_bidder_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -390,6 +515,7 @@ export type Database = {
           payment_method_card_last4: string | null
           payment_method_card_type: string | null
           payment_method_verified_at: string | null
+          paystack_authorization_code: string | null
           paystack_customer_code: string | null
           paystack_subaccount_code: string | null
         }
@@ -403,6 +529,7 @@ export type Database = {
           payment_method_card_last4?: string | null
           payment_method_card_type?: string | null
           payment_method_verified_at?: string | null
+          paystack_authorization_code?: string | null
           paystack_customer_code?: string | null
           paystack_subaccount_code?: string | null
         }
@@ -416,6 +543,7 @@ export type Database = {
           payment_method_card_last4?: string | null
           payment_method_card_type?: string | null
           payment_method_verified_at?: string | null
+          paystack_authorization_code?: string | null
           paystack_customer_code?: string | null
           paystack_subaccount_code?: string | null
         }
@@ -426,7 +554,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      advance_live_auction: {
+        Args: { p_auction_id: string }
+        Returns: undefined
+      }
       close_ended_auctions: { Args: never; Returns: undefined }
+      next_min_lot_bid: { Args: { p_current_price: number }; Returns: number }
       place_bid: {
         Args: {
           p_amount: number
@@ -448,6 +581,29 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "bids"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      place_lot_bid: {
+        Args: {
+          p_amount: number
+          p_bidder_id: string
+          p_lot_id: string
+          p_phase: string
+        }
+        Returns: {
+          amount: number
+          bidder_id: string
+          created_at: string
+          id: string
+          is_winning: boolean
+          lot_id: string
+          phase: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lot_bids"
           isOneToOne: true
           isSetofReturn: false
         }

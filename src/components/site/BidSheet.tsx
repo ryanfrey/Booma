@@ -1,4 +1,5 @@
 import { X } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { type FormEvent, type ReactNode, useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { formatZARWhole } from '../../lib/currency'
@@ -114,9 +115,9 @@ export function BidSheet({
   title: string
   currentBid: number
   onClose: () => void
-  onConfirm: (amount: number) => void
+  onConfirm: (amount: number) => Promise<{ error?: string }>
 }) {
-  const { session } = useAuth()
+  const { session, profile } = useAuth()
   const minBid = getNextMinBid(currentBid)
 
   const [step, setStep] = useState<Step>('amount')
@@ -127,6 +128,22 @@ export function BidSheet({
 
   if (!session) {
     return <SignInGate onClose={onClose} onSignedIn={() => setError(null)} />
+  }
+
+  if (!profile?.payment_method_verified_at) {
+    return (
+      <SheetShell onClose={onClose}>
+        <h2 className="text-h3 tracking-tight text-ink">Verify your payment method</h2>
+        <p className="mt-1 text-small text-ink-2">
+          We charge a small R1 fee to confirm your card before you can bid.
+        </p>
+        <Link to="/account/payment-method" onClick={onClose}>
+          <Button variant="primary" className="mt-5 w-full">
+            Verify payment method
+          </Button>
+        </Link>
+      </SheetShell>
+    )
   }
 
   const chosenAmount = mode === 'single' ? amount : Number(maxAmount)
@@ -141,12 +158,15 @@ export function BidSheet({
     setStep('confirm')
   }
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setStep('placing')
-    setTimeout(() => {
-      onConfirm(chosenAmount)
-      setStep('success')
-    }, 500)
+    const result = await onConfirm(chosenAmount)
+    if (result.error) {
+      setError(result.error)
+      setStep('confirm')
+      return
+    }
+    setStep('success')
   }
 
   return (
@@ -214,6 +234,8 @@ export function BidSheet({
             </div>
           </div>
           <p className="mt-2 text-micro text-ink-2">Estimated only — final fees are confirmed at checkout.</p>
+
+          {error && <p className="mt-3 text-small text-danger">{error}</p>}
 
           {mode === 'max' && (
             <p className="mt-3 text-small text-ink-2">

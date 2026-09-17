@@ -22,6 +22,7 @@ const EMPTY_FORM: {
   estimateLow: string
   estimateHigh: string
   startingPrice: string
+  reservePrice: string
   description: string
   dimensions: string
   conditionNotes: string
@@ -34,6 +35,7 @@ const EMPTY_FORM: {
   estimateLow: '',
   estimateHigh: '',
   startingPrice: '',
+  reservePrice: '',
   description: '',
   dimensions: '',
   conditionNotes: '',
@@ -78,6 +80,7 @@ export function AdminAuctionDetailPage() {
         estimateLow: Number(form.estimateLow) || 0,
         estimateHigh: Number(form.estimateHigh) || 0,
         startingPrice: Number(form.startingPrice) || 0,
+        reservePrice: form.reservePrice ? Number(form.reservePrice) : undefined,
         description: form.description,
         dimensions: form.dimensions,
         conditionNotes: form.conditionNotes,
@@ -211,6 +214,17 @@ export function AdminAuctionDetailPage() {
                 min={0}
                 value={form.startingPrice}
                 onChange={(e) => setForm((f) => ({ ...f, startingPrice: e.target.value }))}
+                className="mt-1 h-11 w-full rounded-card border border-line px-3 text-body text-ink"
+              />
+            </label>
+            <label className="text-small font-semibold text-ink">
+              Reserve price (R) — optional
+              <input
+                type="number"
+                min={0}
+                value={form.reservePrice}
+                onChange={(e) => setForm((f) => ({ ...f, reservePrice: e.target.value }))}
+                placeholder="No reserve"
                 className="mt-1 h-11 w-full rounded-card border border-line px-3 text-body text-ink"
               />
             </label>

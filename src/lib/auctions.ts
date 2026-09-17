@@ -17,6 +17,7 @@ function toMockAuction(row: AuctionRow, lotCount: number): MockAuction {
     status: row.status as AuctionStatus,
     liveAt: row.live_at,
     lotCount,
+    currentLotId: row.current_lot_id,
   }
 }
 
@@ -31,13 +32,15 @@ function toMockLot(row: LotRow, auctionLiveAt: string): MockLot {
     imageCount: 0,
     condition: row.condition,
     location: row.location,
-    currentBid: row.starting_price,
+    currentBid: row.current_price,
     bidCount: 0,
     endsAt: auctionLiveAt,
     status: row.sold_price != null ? 'sold' : undefined,
     soldPrice: row.sold_price ?? undefined,
     category: row.category,
     reserveMet: row.reserve_met ?? undefined,
+    reservePrice: row.reserve_price ?? undefined,
+    liveClosesAt: row.live_closes_at,
     estimateLow: row.estimate_low,
     estimateHigh: row.estimate_high,
     description: row.description,
@@ -162,6 +165,7 @@ export interface CreateLotInput {
   estimateLow: number
   estimateHigh: number
   startingPrice: number
+  reservePrice?: number
 }
 
 export async function createLot(input: CreateLotInput): Promise<LotRow> {
@@ -187,6 +191,8 @@ export async function createLot(input: CreateLotInput): Promise<LotRow> {
       estimate_low: input.estimateLow,
       estimate_high: input.estimateHigh,
       starting_price: input.startingPrice,
+      current_price: input.startingPrice,
+      reserve_price: input.reservePrice ?? null,
     })
     .select('*')
     .single()
