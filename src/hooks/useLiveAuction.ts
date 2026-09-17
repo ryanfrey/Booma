@@ -89,9 +89,9 @@ export function useLiveAuction(
 
   useEffect(() => {
     if (!enabled || !auctionId || paused) return
-    const interval = setInterval(() => {
-      supabase.rpc('advance_live_auction', { p_auction_id: auctionId })
-    }, ADVANCE_TICK_MS)
+    const tick = () => supabase.rpc('advance_live_auction', { p_auction_id: auctionId })
+    tick()
+    const interval = setInterval(tick, ADVANCE_TICK_MS)
     return () => clearInterval(interval)
   }, [enabled, auctionId, paused])
 

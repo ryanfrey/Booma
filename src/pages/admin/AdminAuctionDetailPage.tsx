@@ -6,6 +6,7 @@ import { EmptyState } from '../../components/ui/EmptyState'
 import { formatZARWhole } from '../../lib/currency'
 import { CATEGORIES, CONDITIONS } from '../../lib/mockData'
 import {
+  advanceLiveAuction,
   createLot,
   getAuctionAdmin,
   listLotsAdmin,
@@ -131,6 +132,8 @@ export function AdminAuctionDetailPage() {
     setStatusUpdating(true)
     try {
       await setAuctionStatus(id, 'live')
+      // Opens the first lot right away instead of waiting on a viewer's browser tick to do it.
+      await advanceLiveAuction(id)
       navigate(`/auctions/${id}/live`)
     } finally {
       setStatusUpdating(false)

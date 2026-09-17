@@ -244,3 +244,10 @@ export async function setAuctionStatus(auctionId: string, status: AuctionStatus)
   const { error } = await supabase.from('auctions').update({ status }).eq('id', auctionId)
   if (error) throw error
 }
+
+// Opens the first lot immediately rather than waiting on a viewer's browser tick (or the pg_cron
+// backstop) to happen to call this after the status flips to 'live'.
+export async function advanceLiveAuction(auctionId: string): Promise<void> {
+  const { error } = await supabase.rpc('advance_live_auction', { p_auction_id: auctionId })
+  if (error) throw error
+}
