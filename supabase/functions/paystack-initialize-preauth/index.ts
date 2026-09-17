@@ -93,6 +93,13 @@ Deno.serve(async (req: Request) => {
 
   const reference = `booma_${crypto.randomUUID()}`
 
+  // Paystack can't capture more than a preauthorization was held for, and close-auctions
+  // captures amount + buyer_premium (10%) once the auction ends — so the hold itself has to be
+  // placed for bid * 1.10, not the bare bid. Math.ceil (not round) so rounding never leaves the
+  // hold short of the eventual capture amount. The bare `amount` is still what's validated
+  // against current_price/bid_increment above and what place_bid() records as the bid.
+  const holdAmount = Math.ceil(amount * 1.1 * 100)
+
   const paystackResponse = await fetch('https://api.paystack.co/preauthorization/initialize', {
     method: 'POST',
     headers: {
@@ -101,7 +108,7 @@ Deno.serve(async (req: Request) => {
     },
     body: JSON.stringify({
       email: userData.user.email,
-      amount: Math.round(amount * 100),
+      amount: holdAmount,
       currency: 'ZAR',
       reference,
       subaccount: sellerProfile.paystack_subaccount_code,

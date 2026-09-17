@@ -40,7 +40,7 @@ Deno.serve(async (req: Request) => {
     .from('payments')
     .update({ status: 'processing' })
     .eq('status', 'pending')
-    .select('id, amount, paystack_reference')
+    .select('id, amount, buyer_premium, paystack_reference')
 
   if (claimError) {
     return jsonResponse({ error: `Failed to claim pending payments: ${claimError.message}` }, 500)
@@ -65,7 +65,7 @@ Deno.serve(async (req: Request) => {
         },
         body: JSON.stringify({
           reference: payment.paystack_reference,
-          amount: Math.round(payment.amount * 100),
+          amount: Math.round((payment.amount + payment.buyer_premium) * 100),
           currency: 'ZAR',
         }),
       })

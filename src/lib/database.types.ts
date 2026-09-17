@@ -319,6 +319,7 @@ export type Database = {
         Row: {
           amount: number
           buyer_id: string
+          buyer_premium: number
           created_at: string | null
           id: string
           listing_id: string
@@ -331,6 +332,7 @@ export type Database = {
         Insert: {
           amount: number
           buyer_id: string
+          buyer_premium?: number
           created_at?: string | null
           id?: string
           listing_id: string
@@ -343,6 +345,7 @@ export type Database = {
         Update: {
           amount?: number
           buyer_id?: string
+          buyer_premium?: number
           created_at?: string | null
           id?: string
           listing_id?: string
@@ -384,6 +387,9 @@ export type Database = {
           id: string
           is_admin: boolean
           is_seller: boolean | null
+          payment_method_card_last4: string | null
+          payment_method_card_type: string | null
+          payment_method_verified_at: string | null
           paystack_customer_code: string | null
           paystack_subaccount_code: string | null
         }
@@ -394,6 +400,9 @@ export type Database = {
           id: string
           is_admin?: boolean
           is_seller?: boolean | null
+          payment_method_card_last4?: string | null
+          payment_method_card_type?: string | null
+          payment_method_verified_at?: string | null
           paystack_customer_code?: string | null
           paystack_subaccount_code?: string | null
         }
@@ -404,6 +413,9 @@ export type Database = {
           id?: string
           is_admin?: boolean
           is_seller?: boolean | null
+          payment_method_card_last4?: string | null
+          payment_method_card_type?: string | null
+          payment_method_verified_at?: string | null
           paystack_customer_code?: string | null
           paystack_subaccount_code?: string | null
         }

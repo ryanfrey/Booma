@@ -14,6 +14,8 @@ import { SellerDashboardPage } from './pages/SellerDashboardPage'
 import { StyleguidePage } from './pages/StyleguidePage'
 import { AdminAuctionsPage } from './pages/admin/AdminAuctionsPage'
 import { AdminAuctionDetailPage } from './pages/admin/AdminAuctionDetailPage'
+import { PaymentMethodPage } from './pages/PaymentMethodPage'
+import { WinsPage } from './pages/WinsPage'
 
 function App() {
   return (
@@ -47,6 +49,22 @@ function App() {
           element={
             <ProtectedRoute>
               <SellerDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account/payment-method"
+          element={
+            <ProtectedRoute>
+              <PaymentMethodPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/wins"
+          element={
+            <ProtectedRoute>
+              <WinsPage />
             </ProtectedRoute>
           }
         />
