@@ -20,7 +20,7 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
           type="button"
           onClick={() => setFullscreen(true)}
           aria-label={`View ${title} full screen`}
-          className="absolute inset-0"
+          className="absolute inset-0 border-0 bg-transparent p-0"
         />
         {count > 1 && (
           <span className="absolute bottom-3 right-3 flex items-center gap-1 rounded-pill bg-ink/60 px-2.5 py-1 text-micro font-semibold text-surface">
