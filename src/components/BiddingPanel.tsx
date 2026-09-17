@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import type { Tables } from '../lib/database.types'
 import { useAuth } from '../contexts/AuthContext'
@@ -14,7 +15,7 @@ type Bid = Pick<Tables<'bids'>, 'id' | 'listing_id' | 'bidder_id' | 'amount' | '
 const BID_COLUMNS = 'id, listing_id, bidder_id, amount, is_winning, created_at'
 
 export function BiddingPanel({ listingId }: { listingId: string }) {
-  const { session, user } = useAuth()
+  const { session, user, profile } = useAuth()
   const [listing, setListing] = useState<Listing | null>(null)
   const [bids, setBids] = useState<Bid[]>([])
   const [amount, setAmount] = useState('')
@@ -125,7 +126,8 @@ export function BiddingPanel({ listingId }: { listingId: string }) {
   const minBid = listing.current_price + listing.bid_increment
   const isSeller = user?.id === listing.seller_id
   const isHighBidder = user?.id === listing.current_high_bidder_id
-  const canBid = session && !isSeller && !isEnded && listing.status === 'live'
+  const paymentMethodVerified = Boolean(profile?.payment_method_verified_at)
+  const canBid = session && !isSeller && !isEnded && listing.status === 'live' && paymentMethodVerified
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
@@ -189,6 +191,10 @@ export function BiddingPanel({ listingId }: { listingId: string }) {
         <p className="bid-hint">You can't bid on your own listing.</p>
       ) : isEnded || listing.status !== 'live' ? (
         <p className="bid-hint">This auction has ended.</p>
+      ) : session && !paymentMethodVerified ? (
+        <p className="bid-hint">
+          <Link to="/account/payment-method">Verify your payment method</Link> to place a bid.
+        </p>
       ) : (
         <p className="bid-hint">Sign in to place a bid.</p>
       )}

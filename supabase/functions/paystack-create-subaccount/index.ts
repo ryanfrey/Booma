@@ -91,7 +91,16 @@ Deno.serve(async (req: Request) => {
 
   const subaccountCode = paystackData.data.subaccount_code as string
 
-  const { error: updateError } = await supabase
+  // profiles.paystack_subaccount_code/is_seller aren't in authenticated's column-level UPDATE
+  // grant (see 20260917080000_add_payment_method_verification_to_profiles.sql, which locked
+  // profiles UPDATE down to just display_name/avatar_url) — this write has to go through the
+  // service-role client, same as paystack-verify-payment-method's equivalent self-write.
+  const adminClient = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+  )
+
+  const { error: updateError } = await adminClient
     .from('profiles')
     .update({ paystack_subaccount_code: subaccountCode, is_seller: true })
     .eq('id', userData.user.id)

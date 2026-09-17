@@ -12,6 +12,14 @@ export function HomePage() {
         <Link to="/listings">Browse live auctions</Link>
       </p>
       <p>
+        <Link to="/wins">My wins</Link>
+      </p>
+      <p>
+        <Link to="/account/payment-method">
+          {profile?.payment_method_verified_at ? 'Payment method' : 'Verify payment method'}
+        </Link>
+      </p>
+      <p>
         <Link to="/sell">{profile?.is_seller ? 'Seller payouts' : 'Start selling'}</Link>
       </p>
       {profile?.is_seller && (

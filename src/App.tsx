@@ -7,6 +7,8 @@ import { ListingDetailPage } from './pages/ListingDetailPage'
 import { SellerOnboardingPage } from './pages/SellerOnboardingPage'
 import { CreateListingPage } from './pages/CreateListingPage'
 import { SellerDashboardPage } from './pages/SellerDashboardPage'
+import { PaymentMethodPage } from './pages/PaymentMethodPage'
+import { WinsPage } from './pages/WinsPage'
 
 function App() {
   return (
@@ -35,6 +37,22 @@ function App() {
         element={
           <ProtectedRoute>
             <SellerDashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/account/payment-method"
+        element={
+          <ProtectedRoute>
+            <PaymentMethodPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/wins"
+        element={
+          <ProtectedRoute>
+            <WinsPage />
           </ProtectedRoute>
         }
       />

@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      auctions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          live_at: string
+          location: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          live_at: string
+          location: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          live_at?: string
+          location?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auctions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bids: {
         Row: {
           amount: number
@@ -200,10 +241,85 @@ export type Database = {
           },
         ]
       }
+      lots: {
+        Row: {
+          auction_id: string
+          category: string
+          collection_details: string
+          condition: string
+          condition_notes: string
+          created_at: string
+          description: string
+          dimensions: string
+          estimate_high: number
+          estimate_low: number
+          id: string
+          location: string
+          lot_number: number
+          reserve_met: boolean | null
+          sold_at: string | null
+          sold_price: number | null
+          starting_price: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          auction_id: string
+          category?: string
+          collection_details?: string
+          condition?: string
+          condition_notes?: string
+          created_at?: string
+          description?: string
+          dimensions?: string
+          estimate_high?: number
+          estimate_low?: number
+          id?: string
+          location?: string
+          lot_number: number
+          reserve_met?: boolean | null
+          sold_at?: string | null
+          sold_price?: number | null
+          starting_price?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          auction_id?: string
+          category?: string
+          collection_details?: string
+          condition?: string
+          condition_notes?: string
+          created_at?: string
+          description?: string
+          dimensions?: string
+          estimate_high?: number
+          estimate_low?: number
+          id?: string
+          location?: string
+          lot_number?: number
+          reserve_met?: boolean | null
+          sold_at?: string | null
+          sold_price?: number | null
+          starting_price?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lots_auction_id_fkey"
+            columns: ["auction_id"]
+            isOneToOne: false
+            referencedRelation: "auctions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
           buyer_id: string
+          buyer_premium: number
           created_at: string | null
           id: string
           listing_id: string
@@ -216,6 +332,7 @@ export type Database = {
         Insert: {
           amount: number
           buyer_id: string
+          buyer_premium?: number
           created_at?: string | null
           id?: string
           listing_id: string
@@ -228,6 +345,7 @@ export type Database = {
         Update: {
           amount?: number
           buyer_id?: string
+          buyer_premium?: number
           created_at?: string | null
           id?: string
           listing_id?: string
@@ -267,7 +385,11 @@ export type Database = {
           created_at: string | null
           display_name: string
           id: string
+          is_admin: boolean
           is_seller: boolean | null
+          payment_method_card_last4: string | null
+          payment_method_card_type: string | null
+          payment_method_verified_at: string | null
           paystack_customer_code: string | null
           paystack_subaccount_code: string | null
         }
@@ -276,7 +398,11 @@ export type Database = {
           created_at?: string | null
           display_name: string
           id: string
+          is_admin?: boolean
           is_seller?: boolean | null
+          payment_method_card_last4?: string | null
+          payment_method_card_type?: string | null
+          payment_method_verified_at?: string | null
           paystack_customer_code?: string | null
           paystack_subaccount_code?: string | null
         }
@@ -285,7 +411,11 @@ export type Database = {
           created_at?: string | null
           display_name?: string
           id?: string
+          is_admin?: boolean
           is_seller?: boolean | null
+          payment_method_card_last4?: string | null
+          payment_method_card_type?: string | null
+          payment_method_verified_at?: string | null
           paystack_customer_code?: string | null
           paystack_subaccount_code?: string | null
         }
@@ -296,6 +426,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      close_ended_auctions: { Args: never; Returns: undefined }
       place_bid: {
         Args: {
           p_amount: number
